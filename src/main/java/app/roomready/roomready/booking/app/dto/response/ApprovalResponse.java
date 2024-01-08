@@ -11,7 +11,10 @@ import lombok.*;
 @Builder
 public class ApprovalResponse {
 
-    private Approval approval;
+    private String date;
+    private String id;
+    private String name;
+    private Boolean status;
+    private String acceptance;
 
-    private Reservation reservation;
 }

@@ -1,6 +1,7 @@
 package app.roomready.roomready.booking.app.controller;
 
 import app.roomready.roomready.booking.app.dto.request.ApprovalRequest;
+import app.roomready.roomready.booking.app.dto.response.ApprovalResponse;
 import app.roomready.roomready.booking.app.dto.response.PagingResponse;
 import app.roomready.roomready.booking.app.dto.response.WebResponse;
 import app.roomready.roomready.booking.app.entity.Approval;
@@ -19,8 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class ApprovalController {
 
     private final ApprovalService approvalService;
-    private final ReservationService reservationService;
-
     @GetMapping
     public ResponseEntity<?> getAll(@RequestParam(defaultValue = "1") Integer page,
                                     @RequestParam(defaultValue = "10") Integer size){
@@ -50,12 +49,17 @@ public class ApprovalController {
     @PostMapping
     public ResponseEntity<?> createApproval(@RequestBody Approval request){
 
-        Approval approval = approvalService.create(request);
+//        ApprovalResponse approvalRequest = ApprovalResponse.builder()
+//                .date(request.getApproval().toString())
+//                .status(request.getStatus())
+//                .acceptance(request.getRejection())
+//                .build();
+        ApprovalResponse approvalResponse = approvalService.create(request);
 
         WebResponse<?> webResponse = WebResponse.builder()
                 .message("Succes Create Approval")
                 .status(HttpStatus.CREATED.getReasonPhrase())
-                .data(approval)
+                .data(approvalResponse)
                 .build();
         return ResponseEntity.ok(webResponse);
     }
@@ -63,19 +67,19 @@ public class ApprovalController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> getApprovalById(@PathVariable String id){
-        Approval byId = approvalService.getById(id);
+        ApprovalResponse byId = approvalService.getById(id);
         return ResponseEntity.ok(byId);
     }
 
     @PutMapping
     public ResponseEntity<?> updateApproval(@RequestBody Approval request){
-        Approval approval = approvalService.updateCustomer(request);
+        ApprovalResponse approval = approvalService.updateCustomer(request);
         return ResponseEntity.ok(approval);
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<?> deleteApproval(@PathVariable String request){
-        String deleteById = approvalService.deleteById(request);
-        return ResponseEntity.ok(deleteById);
+    public ResponseEntity<?> deleteApproval(@PathVariable String id){
+        approvalService.deleteById(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Succes Delete Data By id");
     }
 }

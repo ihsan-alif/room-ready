@@ -14,7 +14,9 @@ public class ApprovalRequest {
 
     private Integer page;
 
+    private String name;
 
+    private Boolean status;
 
 
 }

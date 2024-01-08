@@ -1,6 +1,7 @@
 package app.roomready.roomready.booking.app.service.impl;
 
 import app.roomready.roomready.booking.app.dto.request.ApprovalRequest;
+import app.roomready.roomready.booking.app.dto.response.ApprovalResponse;
 import app.roomready.roomready.booking.app.entity.Approval;
 import app.roomready.roomready.booking.app.exception.ErrorController;
 import app.roomready.roomready.booking.app.repository.ApprovalRepository;
@@ -35,29 +36,47 @@ public class ApprovalServiceImpl implements ApprovalService {
     }
 
     @Override
-    public Approval getById(String request) {
+    public ApprovalResponse getById(String request) {
         Optional<Approval> byIdResult = approvalRepository.findById(request);
-        return byIdResult.orElse(null);
+        return ApprovalResponse.builder()
+                .date(byIdResult.get().getApproval().toString())
+                .id(byIdResult.get().getId())
+                .name(byIdResult.get().getReservation().getName())
+                .status(byIdResult.get().getStatus())
+                .acceptance(byIdResult.get().getRejection())
+                .build();
     }
 
     @Override
-    public Approval create(Approval request) {
-        return approvalRepository.save(request);
+    public ApprovalResponse create(Approval request) {
+        approvalRepository.save(request);
+        return ApprovalResponse.builder()
+                .date(request.getApproval().toString())
+                .id(request.getId())
+                .name(request.getReservation().getName())
+                .status(request.getStatus())
+                .acceptance(request.getRejection())
+                .build();
     }
 
     @Override
-    public String deleteById(String request) {
+    public void deleteById(String request) {
         Optional<Approval> byIdResult = approvalRepository.findById(request);
         if (byIdResult.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Id Not Found");
         approvalRepository.deleteById(request);
-        return "Succes Delete data";
     }
 
     @Override
-    public Approval updateCustomer(Approval request) {
+    public ApprovalResponse updateCustomer(Approval request) {
         Optional<Approval> byIdFind = approvalRepository.findById(request.getId());
-        if (byIdFind.isEmpty())throw new RuntimeException("Can not find Data");
-        return approvalRepository.save(request);
+        if (byIdFind.isEmpty()) throw new RuntimeException("Can not find Data");
+        return ApprovalResponse.builder()
+                .date(request.getApproval().toString())
+                .id(request.getId())
+                .name(request.getReservation().getName())
+                .status(request.getStatus())
+                .acceptance(request.getRejection())
+                .build();
 
     }
 
