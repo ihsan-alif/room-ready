@@ -49,11 +49,6 @@ public class ApprovalController {
     @PostMapping
     public ResponseEntity<?> createApproval(@RequestBody Approval request){
 
-//        ApprovalResponse approvalRequest = ApprovalResponse.builder()
-//                .date(request.getApproval().toString())
-//                .status(request.getStatus())
-//                .acceptance(request.getRejection())
-//                .build();
         ApprovalResponse approvalResponse = approvalService.create(request);
 
         WebResponse<?> webResponse = WebResponse.builder()
@@ -79,7 +74,7 @@ public class ApprovalController {
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> deleteApproval(@PathVariable String id){
-        approvalService.deleteById(id);
+        approvalService.deleteById(request);
         return ResponseEntity.status(HttpStatus.OK).body("Succes Delete Data By id");
     }
 }
