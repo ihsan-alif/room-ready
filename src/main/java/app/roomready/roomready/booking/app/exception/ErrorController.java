@@ -4,7 +4,9 @@ import app.roomready.roomready.booking.app.dto.response.WebResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -32,6 +34,18 @@ public class ErrorController {
                 .build();
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String handleException(Exception e, Model model) {
+        model.addAttribute("error", e.getMessage());
+
+        if (e.getClass().getCanonicalName().startsWith("springfox")) {
+            return "redirect:/swagger-ui/index.html";
+        } else {
+            return "error";
+        }
     }
 
 }
