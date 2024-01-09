@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -40,5 +41,15 @@ public class UserServiceImpl implements UserService {
         if (!currentUser.getId().equals(credential.getId())) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "forbidden");
 
         return userCredentialRepository.save(userCredential);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(String id) {
+        UserCredential user = userCredentialRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found")
+        );
+
+        userCredentialRepository.delete(user);
     }
 }
