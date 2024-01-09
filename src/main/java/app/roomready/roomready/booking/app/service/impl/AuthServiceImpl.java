@@ -5,11 +5,13 @@ import app.roomready.roomready.booking.app.dto.request.LoginRequest;
 import app.roomready.roomready.booking.app.dto.request.UserRegisterRequest;
 import app.roomready.roomready.booking.app.dto.response.LoginResponse;
 import app.roomready.roomready.booking.app.dto.response.RegisterResonse;
+import app.roomready.roomready.booking.app.entity.Employee;
 import app.roomready.roomready.booking.app.entity.Role;
 import app.roomready.roomready.booking.app.entity.UserCredential;
 import app.roomready.roomready.booking.app.repository.UserCredentialRepository;
 import app.roomready.roomready.booking.app.security.JwtUtils;
 import app.roomready.roomready.booking.app.service.AuthService;
+import app.roomready.roomready.booking.app.service.EmployeeService;
 import app.roomready.roomready.booking.app.service.RoleService;
 import app.roomready.roomready.booking.app.utils.ValidationUtils;
 import jakarta.annotation.PostConstruct;
@@ -31,6 +33,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserCredentialRepository userCredentialRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
+    private final EmployeeService employeeService;
     private final ValidationUtils validationUtils;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
@@ -70,7 +73,11 @@ public class AuthServiceImpl implements AuthService {
                 .build();
         userCredentialRepository.saveAndFlush(user);
 
-        //build employee
+        Employee employee = Employee.builder()
+                .userCredential(user)
+                .build();
+
+        employeeService.create(employee);
 
         return toRegisterResponse(user);
     }

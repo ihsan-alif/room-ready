@@ -1,7 +1,7 @@
 package app.roomready.roomready.booking.app.service;
 
 import app.roomready.roomready.booking.app.entity.Room;
-import app.roomready.roomready.booking.app.model.SearchRoomRequest;
+import app.roomready.roomready.booking.app.dto.request.SearchRoomRequest;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package app.roomready.roomready.booking.app.service.impl;
 
 import app.roomready.roomready.booking.app.entity.Room;
-import app.roomready.roomready.booking.app.model.SearchRoomRequest;
+import app.roomready.roomready.booking.app.dto.request.SearchRoomRequest;
 import app.roomready.roomready.booking.app.repository.RoomRepository;
 import app.roomready.roomready.booking.app.service.RoomService;
 import jakarta.persistence.criteria.Predicate;

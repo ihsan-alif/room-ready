@@ -3,7 +3,7 @@ package app.roomready.roomready.booking.app.controller;
 import app.roomready.roomready.booking.app.dto.response.PagingResponse;
 import app.roomready.roomready.booking.app.dto.response.WebResponse;
 import app.roomready.roomready.booking.app.entity.Room;
-import app.roomready.roomready.booking.app.model.SearchRoomRequest;
+import app.roomready.roomready.booking.app.dto.request.SearchRoomRequest;
 import app.roomready.roomready.booking.app.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
