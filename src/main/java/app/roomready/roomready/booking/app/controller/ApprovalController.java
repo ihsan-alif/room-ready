@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +22,7 @@ public class ApprovalController {
 
     private final ApprovalService approvalService;
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','GA')")
     public ResponseEntity<?> getAll(@RequestParam(defaultValue = "1") Integer page,
                                     @RequestParam(defaultValue = "10") Integer size){
 
@@ -47,6 +49,7 @@ public class ApprovalController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN','GA')")
     public ResponseEntity<?> createApproval(@RequestBody Approval request){
 
         ApprovalResponse approvalResponse = approvalService.create(request);
@@ -61,20 +64,23 @@ public class ApprovalController {
 
 
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','GA')")
     public ResponseEntity<?> getApprovalById(@PathVariable String id){
         ApprovalResponse byId = approvalService.getById(id);
         return ResponseEntity.ok(byId);
     }
 
     @PutMapping
+    @PreAuthorize("hasAnyRole('ADMIN','GA')")
     public ResponseEntity<?> updateApproval(@RequestBody Approval request){
         ApprovalResponse approval = approvalService.updateCustomer(request);
         return ResponseEntity.ok(approval);
     }
 
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','GA')")
     public ResponseEntity<?> deleteApproval(@PathVariable String id){
-        approvalService.deleteById(request);
+        approvalService.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Succes Delete Data By id");
     }
 }

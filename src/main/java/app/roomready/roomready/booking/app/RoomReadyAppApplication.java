@@ -20,7 +20,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 						email = "maulanamasiqbal.com"
 				),
 				description = "OpenApi documentation for Spring Security",
-				title = "OpenApi specification - Iqbal",
+				title = "OpenApi specification - Room Ready",
 				version = "1.0",
 				license = @License(
 						name = "Licence name",

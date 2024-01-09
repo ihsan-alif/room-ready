@@ -1,6 +1,7 @@
 package app.roomready.roomready.booking.app.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +19,7 @@ public class Approval {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @JsonIgnore
     private String id;
 
     @Column(name = "approval_date")
@@ -32,5 +34,6 @@ public class Approval {
     @OneToOne
     @JoinColumn(name = "reservation_id",referencedColumnName = "id")
     @JsonBackReference
+    @JsonIgnore
     private Reservation reservation;
 }

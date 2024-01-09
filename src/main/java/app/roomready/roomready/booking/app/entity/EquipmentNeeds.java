@@ -19,4 +19,8 @@ public class EquipmentNeeds extends DateTime {
     private String name;
 
     private Integer quantity;
+
+    @ManyToOne
+    @JoinColumn(name = "resservation_id",referencedColumnName = "id")
+    private Reservation reservation;
 }
