@@ -35,6 +35,23 @@ public class EquipmentNeedsImpl implements EquipmentNeedsService {
         return toEquipmentNeedsResponse(equipmentNeeds);
     }
 
+    @Override
+    public EquipmentNeedsResponse getById(String id) {
+
+        EquipmentNeeds equipmentNeeds = repository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found")
+        );
+
+        return toEquipmentNeedsResponse(equipmentNeeds);
+    }
+
+    @Override
+    public EquipmentNeeds get(String id) {
+        return repository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found")
+        );
+    }
+
     private EquipmentNeedsResponse toEquipmentNeedsResponse(EquipmentNeeds equipmentNeeds){
         return EquipmentNeedsResponse.builder()
                 .id(equipmentNeeds.getId())
