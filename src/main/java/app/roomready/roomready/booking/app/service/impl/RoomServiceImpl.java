@@ -1,7 +1,11 @@
 package app.roomready.roomready.booking.app.service.impl;
 
+import app.roomready.roomready.booking.app.dto.request.RoomRequest;
+import app.roomready.roomready.booking.app.dto.response.PagingResponse;
+import app.roomready.roomready.booking.app.dto.response.RoomResponse;
+import app.roomready.roomready.booking.app.dto.response.WebResponse;
 import app.roomready.roomready.booking.app.entity.Room;
-import app.roomready.roomready.booking.app.model.SearchRoomRequest;
+import app.roomready.roomready.booking.app.dto.request.SearchRoomRequest;
 import app.roomready.roomready.booking.app.repository.RoomRepository;
 import app.roomready.roomready.booking.app.service.RoomService;
 import jakarta.persistence.criteria.Predicate;
@@ -12,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
@@ -24,24 +29,35 @@ public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
 
     @Override
-    public Room createNew(Room room) {
-        return roomRepository.save(room);
+    @Transactional(rollbackFor = Exception.class)
+    public RoomResponse createNew(RoomRequest request) {
+        Room room = Room.builder()
+                .name(request.getName())
+                .capacities(request.getCapacities())
+                .status(request.getStatus())
+                .facilities(request.getFacilities())
+                .build();
+        room = roomRepository.save(room);
+
+        return RoomResponse.builder()
+                .id(room.getId())
+                .name(room.getName())
+                .capacities(room.getCapacities())
+                .status(room.getStatus())
+                .facilities(room.getFacilities())
+                .build();
     }
 
     @Override
-    public Room getById(String id) {
-        Optional<Room> optionalRoom = roomRepository.findById(id);
-        if (optionalRoom.isPresent()) return roomRepository.findById(id).get();
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "room not found");
+    @Transactional(readOnly = true)
+    public RoomResponse getById(String id) {
+        Room room = findByIdOrThrowNotFound(id);
+        return toRoomResponse(room);
     }
 
     @Override
-    public List<Room> createBulk(List<Room> rooms) {
-        return  roomRepository.saveAll(rooms);
-    }
-
-    @Override
-    public Page<Room> getAll(SearchRoomRequest request) {
+    @Transactional(readOnly = true)
+    public WebResponse<List<RoomResponse>> getAll(SearchRoomRequest request) {
         if (request.getPage() <= 0) request.setPage(1);
         Pageable pageable = PageRequest.of(
                 (request.getPage() - 1), request.getSize()
@@ -49,21 +65,65 @@ public class RoomServiceImpl implements RoomService {
 
         Specification<Room> specification = getRoomSpecification(request);
 
-        return roomRepository.findAll(specification, pageable);
+        Page<Room> rooms = roomRepository.findAll(specification, pageable);
+
+        List<RoomResponse> roomResponses = new ArrayList<>();
+        for (Room room : rooms.getContent()){
+            RoomResponse roomResponse = RoomResponse.builder()
+                    .id(room.getId())
+                    .name(room.getName())
+                    .capacities(room.getCapacities())
+                    .status(room.getStatus())
+                    .facilities(room.getFacilities())
+                    .build();
+            roomResponses.add(roomResponse);
+        }
+
+        PagingResponse pagingResponse = PagingResponse.builder()
+                .page(request.getPage())
+                .size(request.getSize())
+                .totalPage(rooms.getTotalPages())
+                .totalElements(rooms.getTotalElements())
+                .build();
+
+        return WebResponse.<List<RoomResponse>>builder()
+                .status(HttpStatus.OK.getReasonPhrase())
+                .message("successfully get all room")
+                .paging(pagingResponse)
+                .data(roomResponses)
+                .build();
     }
 
     @Override
-    public Room update(Room room) {
-        Optional<Room> optionalRoom = roomRepository.findById(room.getId());
-        if (optionalRoom.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "room not found");
-        return roomRepository.save(room);
+    public RoomResponse update(Room room) {
+        Room updatedRoom = findByIdOrThrowNotFound(room.getId());
+        updatedRoom.setId(room.getId());
+        updatedRoom.setName(room.getName());
+        updatedRoom.setCapacities(room.getCapacities());
+        updatedRoom.setStatus(room.getStatus());
+        updatedRoom.setFacilities(room.getFacilities());
+        return toRoomResponse(updatedRoom);
     }
 
     @Override
     public void deleteById(String id) {
-        Optional<Room> optionalRoom = roomRepository.findById(id);
-        if (optionalRoom.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "room not found");
-        roomRepository.delete(optionalRoom.get());
+        Room room = findByIdOrThrowNotFound(id);
+        roomRepository.delete(room);
+    }
+
+    private Room findByIdOrThrowNotFound(String id){
+        return roomRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "room not found"));
+    }
+
+    private RoomResponse toRoomResponse(Room room){
+        return RoomResponse.builder()
+                .id(room.getId())
+                .name(room.getName())
+                .capacities(room.getCapacities())
+                .status(room.getStatus())
+                .facilities(room.getFacilities())
+                .build();
     }
 
     private Specification<Room> getRoomSpecification(SearchRoomRequest request){
