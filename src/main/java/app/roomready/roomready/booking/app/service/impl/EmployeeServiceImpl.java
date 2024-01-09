@@ -26,4 +26,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         repository.save(employee);
     }
+
+    @Override
+    public Employee get(String id) {
+        return repository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found")
+        );
+    }
 }

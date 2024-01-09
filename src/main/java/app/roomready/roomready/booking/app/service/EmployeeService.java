@@ -5,4 +5,6 @@ import app.roomready.roomready.booking.app.entity.Employee;
 public interface EmployeeService {
 
     void create(Employee employee);
+
+    Employee get(String id);
 }
