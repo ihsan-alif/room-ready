@@ -1,4 +1,4 @@
-package app.roomready.roomready.booking.app.model;
+package app.roomready.roomready.booking.app.dto.request;
 
 import lombok.*;
 
