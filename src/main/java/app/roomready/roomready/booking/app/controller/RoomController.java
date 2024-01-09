@@ -1,6 +1,7 @@
 package app.roomready.roomready.booking.app.controller;
 
 import app.roomready.roomready.booking.app.dto.request.RoomRequest;
+import app.roomready.roomready.booking.app.dto.request.RoomUpdateRequest;
 import app.roomready.roomready.booking.app.dto.response.PagingResponse;
 import app.roomready.roomready.booking.app.dto.response.RoomResponse;
 import app.roomready.roomready.booking.app.dto.response.WebResponse;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +24,7 @@ public class RoomController {
     private final RoomService roomService;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<?> createNewRoom(@RequestBody RoomRequest request){
         RoomResponse roomResponse = roomService.createNew(request);
 
@@ -35,6 +38,7 @@ public class RoomController {
     }
 
     @GetMapping(path = "/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','GA')")
     public ResponseEntity<?> getRoomById(@RequestParam String id){
         RoomResponse roomResponse = roomService.getById(id);
         WebResponse<RoomResponse> response = WebResponse.<RoomResponse>builder()
@@ -47,6 +51,7 @@ public class RoomController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','GA)")
     public ResponseEntity<?> getAll(
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
@@ -64,6 +69,7 @@ public class RoomController {
     }
 
     @DeleteMapping(path = "/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<?> deleteRoomById(@RequestParam String id){
         roomService.deleteById(id);
 
@@ -77,8 +83,9 @@ public class RoomController {
     }
 
     @PutMapping
-    public ResponseEntity<?> updateRoom(@RequestBody Room room){
-        RoomResponse updatedRoom = roomService.update(room);
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<?> updateRoom(@RequestBody RoomUpdateRequest request){
+        RoomResponse updatedRoom = roomService.update(request);
         WebResponse<?> response = WebResponse.builder()
                 .status(HttpStatus.OK.getReasonPhrase())
                 .message("successfully update room")

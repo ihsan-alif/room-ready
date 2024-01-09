@@ -1,6 +1,6 @@
 package app.roomready.roomready.booking.app.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
+import app.roomready.roomready.booking.app.entity.Approval;
 import lombok.*;
 
 @Getter
@@ -8,10 +8,15 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RoomRequest {
-    @NotBlank(message = "name is required")
+public class ApprovalRequest {
+
+    private Integer size;
+
+    private Integer page;
+
     private String name;
-    private Integer capacities;
+
     private Boolean status;
-    private String facilities;
+
+
 }

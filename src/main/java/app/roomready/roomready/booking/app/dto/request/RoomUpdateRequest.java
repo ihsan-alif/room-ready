@@ -8,10 +8,14 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RoomRequest {
+public class RoomUpdateRequest {
+    @NotBlank(message = "id is required")
+    private String id;
     @NotBlank(message = "name is required")
     private String name;
+    @NotBlank(message = "capacities is required")
     private Integer capacities;
+    @NotBlank(message = "status is required")
     private Boolean status;
     private String facilities;
 }

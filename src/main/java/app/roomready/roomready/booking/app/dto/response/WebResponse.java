@@ -1,5 +1,6 @@
 package app.roomready.roomready.booking.app.dto.response;
 
+import app.roomready.roomready.booking.app.dto.response.PagingResponse;
 import lombok.*;
 
 @Getter

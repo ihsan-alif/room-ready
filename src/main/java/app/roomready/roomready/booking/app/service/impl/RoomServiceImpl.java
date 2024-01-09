@@ -1,6 +1,7 @@
 package app.roomready.roomready.booking.app.service.impl;
 
 import app.roomready.roomready.booking.app.dto.request.RoomRequest;
+import app.roomready.roomready.booking.app.dto.request.RoomUpdateRequest;
 import app.roomready.roomready.booking.app.dto.response.PagingResponse;
 import app.roomready.roomready.booking.app.dto.response.RoomResponse;
 import app.roomready.roomready.booking.app.dto.response.WebResponse;
@@ -8,8 +9,10 @@ import app.roomready.roomready.booking.app.entity.Room;
 import app.roomready.roomready.booking.app.dto.request.SearchRoomRequest;
 import app.roomready.roomready.booking.app.repository.RoomRepository;
 import app.roomready.roomready.booking.app.service.RoomService;
+import app.roomready.roomready.booking.app.utils.ValidationUtils;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,25 +30,24 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RoomServiceImpl implements RoomService {
     private final RoomRepository roomRepository;
+    private final ValidationUtils validationUtils;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public RoomResponse createNew(RoomRequest request) {
-        Room room = Room.builder()
-                .name(request.getName())
-                .capacities(request.getCapacities())
-                .status(request.getStatus())
-                .facilities(request.getFacilities())
-                .build();
-        room = roomRepository.save(room);
-
-        return RoomResponse.builder()
-                .id(room.getId())
-                .name(room.getName())
-                .capacities(room.getCapacities())
-                .status(room.getStatus())
-                .facilities(room.getFacilities())
-                .build();
+        try {
+            validationUtils.validate(request);
+            Room room = Room.builder()
+                    .name(request.getName())
+                    .capacities(request.getCapacities())
+                    .status(request.getStatus())
+                    .facilities(request.getFacilities())
+                    .build();
+            room = roomRepository.save(room);
+            return toRoomResponse(room);
+        }catch (DataIntegrityViolationException e){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "room name already exist");
+        }
     }
 
     @Override
@@ -69,13 +71,7 @@ public class RoomServiceImpl implements RoomService {
 
         List<RoomResponse> roomResponses = new ArrayList<>();
         for (Room room : rooms.getContent()){
-            RoomResponse roomResponse = RoomResponse.builder()
-                    .id(room.getId())
-                    .name(room.getName())
-                    .capacities(room.getCapacities())
-                    .status(room.getStatus())
-                    .facilities(room.getFacilities())
-                    .build();
+            RoomResponse roomResponse = toRoomResponse(room);
             roomResponses.add(roomResponse);
         }
 
@@ -95,17 +91,23 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public RoomResponse update(Room room) {
-        Room updatedRoom = findByIdOrThrowNotFound(room.getId());
-        updatedRoom.setId(room.getId());
-        updatedRoom.setName(room.getName());
-        updatedRoom.setCapacities(room.getCapacities());
-        updatedRoom.setStatus(room.getStatus());
-        updatedRoom.setFacilities(room.getFacilities());
-        return toRoomResponse(updatedRoom);
+    @Transactional(rollbackFor = Exception.class)
+    public RoomResponse update(RoomUpdateRequest request) {
+        validationUtils.validate(request);
+
+        Room room = findByIdOrThrowNotFound(request.getId());
+        room.setId(request.getId());
+        room.setName(request.getName());
+        room.setCapacities(request.getCapacities());
+        room.setStatus(request.getStatus());
+        room.setFacilities(request.getFacilities());
+        roomRepository.saveAndFlush(room);
+
+        return toRoomResponse(room);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteById(String id) {
         Room room = findByIdOrThrowNotFound(id);
         roomRepository.delete(room);
@@ -131,7 +133,7 @@ public class RoomServiceImpl implements RoomService {
             List<Predicate> predicates = new ArrayList<>();
 
             if (request.getName() != null){
-                Predicate predicateName = criteriaBuilder.like(root.get("name"), "%" + request.getName() + "%");
+                Predicate predicateName = criteriaBuilder.like(root.get("name"), "%" + request.getName().toLowerCase() + "%");
                 predicates.add(predicateName);
             }
             return query.where(predicates.toArray(new Predicate[]{})).getRestriction();
