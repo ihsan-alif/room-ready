@@ -32,6 +32,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 				@Server(
 						description = "Local ENV",
 						url = "http://localhost:8080"
+				),
+				@Server(
+						description = "Server ENV",
+						url = "http://121322234:8080"
 				)
 		},
 		security = {
@@ -48,7 +52,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 		bearerFormat = "JWT",
 		in = SecuritySchemeIn.HEADER
 )
-
 public class RoomReadyAppApplication {
 
 	public static void main(String[] args) {

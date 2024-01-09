@@ -1,7 +1,8 @@
 package app.roomready.roomready.booking.app.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,11 +12,13 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateEquipmentRequest {
+public class EquipmentRequest {
 
+    @JsonIgnore
+    private String id;
     @NotEmpty(message = "Name has not be empty!")
     private String name;
 
-    @NotBlank(message = "Quantity has not be blank!")
+    @NotNull(message = "Quantity has not be null!")
     private Integer quantity;
 }
