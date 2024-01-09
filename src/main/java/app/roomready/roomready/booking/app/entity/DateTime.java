@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -28,8 +29,8 @@ public class DateTime implements Times {
     @JsonIgnore
     private LocalDateTime createdAt;
 
-    @Column(name = "update_at")
-    @CreationTimestamp
+    @Column(name = "updated_at")
+    @UpdateTimestamp
     @JsonFormat(pattern = "yyyy/MM/dd, HH:mm:ss", timezone = "Asia/Jakarta")
     @JsonIgnore
     private LocalDateTime updatedAt;
