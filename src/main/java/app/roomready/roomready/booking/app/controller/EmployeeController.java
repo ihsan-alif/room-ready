@@ -4,15 +4,19 @@ import app.roomready.roomready.booking.app.dto.request.SearchEmployeeRequest;
 import app.roomready.roomready.booking.app.dto.request.UpdateEmployeeRequest;
 import app.roomready.roomready.booking.app.dto.response.EmployeeResponse;
 import app.roomready.roomready.booking.app.dto.response.PagingResponse;
+import app.roomready.roomready.booking.app.dto.response.UploadResponse;
 import app.roomready.roomready.booking.app.dto.response.WebResponse;
 import app.roomready.roomready.booking.app.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -102,4 +106,21 @@ public class EmployeeController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PatchMapping(value = "/{employeeId}/upload-avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<WebResponse<UploadResponse>> uploadAvatar(
+            @PathVariable String employeeId,
+            @RequestParam("avatarFileName") MultipartFile avatarFileName) throws IOException {
+
+        UploadResponse uploadResponse = service.uploadAvatar(avatarFileName, employeeId);
+
+        WebResponse<UploadResponse> response = WebResponse.<UploadResponse>builder()
+                .status(HttpStatus.OK.getReasonPhrase())
+                .message("successfully upload avatar employee")
+                .data(uploadResponse)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
 }
