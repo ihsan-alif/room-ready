@@ -3,7 +3,7 @@ package app.roomready.roomready.booking.app.controller;
 import app.roomready.roomready.booking.app.dto.request.LoginRequest;
 import app.roomready.roomready.booking.app.dto.request.UserRegisterRequest;
 import app.roomready.roomready.booking.app.dto.response.LoginResponse;
-import app.roomready.roomready.booking.app.dto.response.RegisterResonse;
+import app.roomready.roomready.booking.app.dto.response.RegisterResponse;
 import app.roomready.roomready.booking.app.dto.response.WebResponse;
 import app.roomready.roomready.booking.app.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +24,8 @@ public class AuthController {
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping(path = "/register")
     public ResponseEntity<?> register(@RequestBody UserRegisterRequest request) {
-        RegisterResonse register = authService.register(request);
-        WebResponse<RegisterResonse> response = WebResponse.<RegisterResonse>builder()
+        RegisterResponse register = authService.register(request);
+        WebResponse<RegisterResponse> response = WebResponse.<RegisterResponse>builder()
                 .status(HttpStatus.CREATED.getReasonPhrase())
                 .message("successfully create new user")
                 .data(register)
@@ -36,8 +36,8 @@ public class AuthController {
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping(path = "/register/admin")
     public ResponseEntity<?> registerAdmin(@RequestBody UserRegisterRequest request) {
-        RegisterResonse register = authService.registerAdmin(request);
-        WebResponse<RegisterResonse> response = WebResponse.<RegisterResonse>builder()
+        RegisterResponse register = authService.registerAdmin(request);
+        WebResponse<RegisterResponse> response = WebResponse.<RegisterResponse>builder()
                 .status(HttpStatus.CREATED.getReasonPhrase())
                 .message("successfully create new user")
                 .data(register)
@@ -48,8 +48,8 @@ public class AuthController {
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping(path = "/register/ga")
     public ResponseEntity<?> registerGA(@RequestBody UserRegisterRequest request) {
-        RegisterResonse register = authService.registerGA(request);
-        WebResponse<RegisterResonse> response = WebResponse.<RegisterResonse>builder()
+        RegisterResponse register = authService.registerGA(request);
+        WebResponse<RegisterResponse> response = WebResponse.<RegisterResponse>builder()
                 .status(HttpStatus.CREATED.getReasonPhrase())
                 .message("successfully create new user")
                 .data(register)
