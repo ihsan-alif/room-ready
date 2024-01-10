@@ -73,10 +73,9 @@ public class ReservationServiceImpl implements ReservationService {
         return equipmentNeedsList;
     }
 
-    @Override
-    public ReservationResponse findById(String request) {
-        Optional<Reservation> byId = reservationRepository.findById(request);
-        if (byId.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Id Not Found");
+    public ReservationResponse findById(String id) {
+        Optional<Reservation> byId = reservationRepository.findById(id);
+        byId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reservation not found"));
         return ReservationResponse.builder()
                 .reservation(byId.get().getReservationDate())
                 .employeeName(byId.get().getEmployee().getName())
