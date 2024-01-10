@@ -9,6 +9,7 @@ import app.roomready.roomready.booking.app.entity.UserCredential;
 import app.roomready.roomready.booking.app.repository.EmployeeRepository;
 import app.roomready.roomready.booking.app.service.EmployeeService;
 import app.roomready.roomready.booking.app.service.UserService;
+import app.roomready.roomready.booking.app.utils.ValidationUtils;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,14 +40,20 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final UserService userService;
 
+    private final PasswordEncoder passwordEncoder;
+
     private final List<String> contentTypes = List.of("image/jpeg", "image/png");
 
     private final Path directoryPath;
 
-    public EmployeeServiceImpl(EmployeeRepository repository, UserService userService, @Value("${app.room-ready.directory-image-path}") String directoryPath) {
+    private final ValidationUtils utils;
+
+    public EmployeeServiceImpl(EmployeeRepository repository, UserService userService, PasswordEncoder passwordEncoder, @Value("${app.room-ready.directory-image-path}") String directoryPath, ValidationUtils utils) {
         this.repository = repository;
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
         this.directoryPath = Paths.get(directoryPath);
+        this.utils = utils;
     }
 
     private static final String ROLE = "ROLE_ADMIN";
@@ -96,6 +104,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public EmployeeResponse update(UpdateEmployeeRequest request) {
+
+        utils.validate(request);
+
         Employee employee = repository.findById(request.getId()).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NOT FOUND")
         );
@@ -111,6 +122,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setDivision(request.getDivision());
         employee.setPosition(request.getPosition());
         employee.setContactInfo(request.getContactInfo());
+
+        String hashPassword = passwordEncoder.encode(request.getPassword());
+
+        userCredential.setUsername(request.getUsername());
+        userCredential.setPassword(hashPassword);
+
+        userService.updateCredential(userCredential);
 
         repository.save(employee);
 
