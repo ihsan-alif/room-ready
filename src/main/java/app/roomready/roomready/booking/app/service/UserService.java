@@ -6,6 +6,5 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public interface UserService extends UserDetailsService {
     UserCredential loadUserById(String userId);
     UserCredential updateCredential(UserCredential userCredential);
-
     void delete(String id);
 }

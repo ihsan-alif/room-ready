@@ -18,5 +18,4 @@ public class UserRegisterRequest {
     @NotBlank(message = "password must not be blank")
     @Size(min = 8, message = "password must be greater than 8 characters")
     private String password;
-    //employee detail
 }

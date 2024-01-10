@@ -17,12 +17,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/equipment-needs")
+@RequestMapping(path = "/api/equipment-needs")
 public class EquipmentNeedsController {
 
     private final EquipmentNeedsService service;
 
-    @PostMapping("/")
+    @PostMapping(path = "/")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<WebResponse<EquipmentNeedsResponse>> create(@RequestBody EquipmentRequest request){
         EquipmentNeedsResponse equipmentNeedsResponse = service.create(request);
@@ -50,23 +50,23 @@ public class EquipmentNeedsController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}")
+   /* @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<WebResponse<EquipmentNeedsResponse>> update(@PathVariable("id") String id,
                                                                       @RequestBody EquipmentRequest request){
         request.setId(id);
 
-        EquipmentNeedsResponse update = service.update(request);
+        //EquipmentNeedsResponse update = service.update(request);
 
-        WebResponse<EquipmentNeedsResponse> response = WebResponse.<EquipmentNeedsResponse>builder()
+        *//*WebResponse<EquipmentNeedsResponse> response = WebResponse.<EquipmentNeedsResponse>builder()
                 .status(HttpStatus.OK.getReasonPhrase())
                 .message("successfully update equipment needs")
                 .data(update)
                 .build();
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(response);*//*
     }
-
+*/
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<WebResponse<String>> delete(@PathVariable("id") String id){

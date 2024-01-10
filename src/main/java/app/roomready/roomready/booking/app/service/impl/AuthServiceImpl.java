@@ -4,7 +4,7 @@ import app.roomready.roomready.booking.app.constant.ERole;
 import app.roomready.roomready.booking.app.dto.request.LoginRequest;
 import app.roomready.roomready.booking.app.dto.request.UserRegisterRequest;
 import app.roomready.roomready.booking.app.dto.response.LoginResponse;
-import app.roomready.roomready.booking.app.dto.response.RegisterResonse;
+import app.roomready.roomready.booking.app.dto.response.RegisterResponse;
 import app.roomready.roomready.booking.app.entity.Employee;
 import app.roomready.roomready.booking.app.entity.Role;
 import app.roomready.roomready.booking.app.entity.UserCredential;
@@ -60,7 +60,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public RegisterResonse register(UserRegisterRequest request) {
+    @Transactional(rollbackFor = Exception.class)
+    public RegisterResponse register(UserRegisterRequest request) {
         validationUtils.validate(request);
         Role roleEmployee = roleService.getOrSave(ERole.ROLE_EMPLOYEE);
 
@@ -83,7 +84,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public RegisterResonse registerAdmin(UserRegisterRequest request) {
+    @Transactional(rollbackFor = Exception.class)
+    public RegisterResponse registerAdmin(UserRegisterRequest request) {
         validationUtils.validate(request);
         Role roleEmployee = roleService.getOrSave(ERole.ROLE_EMPLOYEE);
         Role roleAdmin = roleService.getOrSave(ERole.ROLE_ADMIN);
@@ -98,13 +100,18 @@ public class AuthServiceImpl implements AuthService {
                 .build();
         userCredentialRepository.saveAndFlush(user);
 
-        //build employee
+        Employee employee = Employee.builder()
+                .userCredential(user)
+                .build();
+
+        employeeService.create(employee);
 
         return toRegisterResponse(user);
     }
 
     @Override
-    public RegisterResonse registerGA(UserRegisterRequest request) {
+    @Transactional(rollbackFor = Exception.class)
+    public RegisterResponse registerGA(UserRegisterRequest request) {
         validationUtils.validate(request);
         Role roleGA = roleService.getOrSave(ERole.ROLE_GA);
 
@@ -117,7 +124,11 @@ public class AuthServiceImpl implements AuthService {
                 .build();
         userCredentialRepository.saveAndFlush(user);
 
-        //build employee
+        Employee employee = Employee.builder()
+                .userCredential(user)
+                .build();
+
+        employeeService.create(employee);
 
         return toRegisterResponse(user);
     }
@@ -142,9 +153,9 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
-    private static RegisterResonse toRegisterResponse(UserCredential userCredential) {
+    private static RegisterResponse toRegisterResponse(UserCredential userCredential) {
         List<String> roles = userCredential.getRoles().stream().map(role -> role.getRole().name()).toList();
-        return RegisterResonse.builder()
+        return RegisterResponse.builder()
                 .username(userCredential.getUsername())
                 .role(roles)
                 .build();
