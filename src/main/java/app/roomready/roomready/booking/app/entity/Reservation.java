@@ -1,5 +1,6 @@
 package app.roomready.roomready.booking.app.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,17 +29,25 @@ public class Reservation {
 
     @OneToOne(mappedBy = "reservation")
     @JsonManagedReference
+    @JsonIgnore
     private Employee employee;
+//    @OneToOne(mappedBy = "reservation")
+//    @JsonManagedReference
+//    @JsonIgnore
+//    private USer employee;
 
     @OneToOne(mappedBy = "reservation")
+    @JsonIgnore
     @JsonManagedReference
     private Room room;
 
     @OneToOne(mappedBy = "reservation")
+    @JsonIgnore
     @JsonManagedReference
     private Approval approval;
 
     @OneToMany(mappedBy = "reservation")
+    @JsonIgnore
     @JsonManagedReference
     private List<EquipmentNeeds> equipmentNeeds;
 

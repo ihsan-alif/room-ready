@@ -25,9 +25,10 @@ public class Room {
 
     private String facilities;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "reservation_id",referencedColumnName = "id")
     @JsonBackReference
     @JsonIgnore
     private Reservation reservation;
+
 }

@@ -3,10 +3,7 @@ package app.roomready.roomready.booking.app.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
@@ -15,6 +12,7 @@ import java.util.Date;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Approval {
 
     @Id
@@ -36,4 +34,9 @@ public class Approval {
     @JsonBackReference
     @JsonIgnore
     private Reservation reservation;
+//    @OneToOne
+//    @JoinColumn(name = "room_id",referencedColumnName = "id")
+//    @JsonBackReference
+//    @JsonIgnore
+//    private Room room;
 }

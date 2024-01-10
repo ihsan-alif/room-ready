@@ -1,11 +1,13 @@
 package app.roomready.roomready.booking.app.controller;
 
+import app.roomready.roomready.booking.app.dto.request.ReservationGetAllRequest;
 import app.roomready.roomready.booking.app.dto.request.ReservationRequest;
 import app.roomready.roomready.booking.app.dto.response.ReservationResponse;
 import app.roomready.roomready.booking.app.entity.Reservation;
 import app.roomready.roomready.booking.app.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,15 +22,21 @@ public class ReservationController {
         ReservationResponse reservationResponse = reservationService.create(request);
         return ResponseEntity.ok(reservationResponse);
     }
+//    @PostMapping
+//    public ResponseEntity<?> createReservation2(@RequestBody Reservation request){
+//        ReservationResponse reservationResponse = reservationService.createReservation(request);
+//        return ResponseEntity.ok(reservationResponse);
+//    }
 
     @GetMapping
     public ResponseEntity<?> getAll(@RequestParam(required = false,defaultValue = "1") Integer size,
-                                    @RequestParam(required = false,defaultValue = "1") Integer page){
-        ReservationRequest PageRequest = ReservationRequest.builder()
+                                    @RequestParam(required = false,defaultValue = "10") Integer page){
+        ReservationGetAllRequest pageRequest = ReservationGetAllRequest.builder()
                 .size(size)
                 .page(page)
                 .build();
-        Page<Reservation> getAllPage = reservationService.getAll(PageRequest);
+
+        Page<Reservation> getAllPage = reservationService.getAll(pageRequest);
         return ResponseEntity.ok().body(getAllPage);
     }
 
@@ -39,12 +47,12 @@ public class ReservationController {
         return ResponseEntity.ok(FindbyId);
     }
 
-    @PutMapping
-    public ResponseEntity<?> update(@RequestBody ReservationRequest request){
-        ReservationResponse update = reservationService.update(request);
-
-        return ResponseEntity.ok(update);
-    }
+//    @PutMapping
+//    public ResponseEntity<?> update(@RequestBody ReservationRequest request){
+//        ReservationResponse update = reservationService.update(request);
+//
+//        return ResponseEntity.ok(update);
+//    }
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> deleteById(@PathVariable String id){

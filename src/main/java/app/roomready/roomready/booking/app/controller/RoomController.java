@@ -51,7 +51,7 @@ public class RoomController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','GA)")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_GA')")
     public ResponseEntity<?> getAll(
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "10") Integer size,

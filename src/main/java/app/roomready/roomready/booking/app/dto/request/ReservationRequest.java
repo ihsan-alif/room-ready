@@ -1,5 +1,8 @@
 package app.roomready.roomready.booking.app.dto.request;
 
+import app.roomready.roomready.booking.app.entity.Employee;
+import app.roomready.roomready.booking.app.entity.Reservation;
+import app.roomready.roomready.booking.app.entity.Room;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -15,20 +18,19 @@ import java.util.List;
 @Builder
 public class ReservationRequest {
 
-    @JsonIgnore
-    private Integer size;
-    @JsonIgnore
-    private Integer page;
+//    @JsonIgnore
+//    private Integer size;
+//    @JsonIgnore
+//    private Integer page;
 
-    @JsonIgnore
-    private String id;
+//    private String id;
 
-    private String employee;
+    private String employeeId;
 
-    private String room;
+    private String roomName;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date reservation;
+    private Date reservationDate;
 
     private List<String> equipmentNeeds;
 }

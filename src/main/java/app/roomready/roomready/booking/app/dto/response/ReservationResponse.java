@@ -1,5 +1,6 @@
 package app.roomready.roomready.booking.app.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.*;
@@ -14,6 +15,7 @@ import java.util.List;
 @Builder
 public class ReservationResponse {
 
+    @JsonIgnore
     private String id;
 
     private String employeeName;

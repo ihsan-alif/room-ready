@@ -12,9 +12,9 @@ public interface ApprovalService {
 
     ApprovalResponse getById(String request);
 
-    ApprovalResponse create(Approval request);
+    ApprovalResponse create(ApprovalRequest request);
 
     void deleteById(String request);
 
-    ApprovalResponse updateCustomer(Approval customer);
+//    ApprovalResponse updateCustomer(ApprovalRequest customer);
 }
