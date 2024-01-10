@@ -41,7 +41,7 @@ public class ApprovalServiceImpl implements ApprovalService {
         return ApprovalResponse.builder()
                 .date(byIdResult.get().getApproval().toString())
                 .id(byIdResult.get().getId())
-                .name(byIdResult.get().getReservation().getName())
+                .name(byIdResult.get().getReservation().getRoom().getName())
                 .status(byIdResult.get().getStatus())
                 .acceptance(byIdResult.get().getRejection())
                 .build();
@@ -53,7 +53,7 @@ public class ApprovalServiceImpl implements ApprovalService {
         return ApprovalResponse.builder()
                 .date(request.getApproval().toString())
                 .id(request.getId())
-                .name(request.getReservation().getName())
+                .name(request.getReservation().getRoom().getName())
                 .status(request.getStatus())
                 .acceptance(request.getRejection())
                 .build();
@@ -73,7 +73,7 @@ public class ApprovalServiceImpl implements ApprovalService {
         return ApprovalResponse.builder()
                 .date(request.getApproval().toString())
                 .id(request.getId())
-                .name(request.getReservation().getName())
+                .name(request.getReservation().getRoom().getName())
                 .status(request.getStatus())
                 .acceptance(request.getRejection())
                 .build();

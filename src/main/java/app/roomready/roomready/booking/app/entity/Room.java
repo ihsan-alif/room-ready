@@ -1,5 +1,7 @@
 package app.roomready.roomready.booking.app.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,4 +24,10 @@ public class Room {
     private Boolean status;
 
     private String facilities;
+
+    @OneToOne
+    @JoinColumn(name = "reservation_id",referencedColumnName = "id")
+    @JsonBackReference
+    @JsonIgnore
+    private Reservation reservation;
 }
