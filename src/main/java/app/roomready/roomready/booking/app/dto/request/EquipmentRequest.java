@@ -13,7 +13,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EquipmentRequest {
-
     @JsonIgnore
     private String id;
     @NotEmpty(message = "Name has not be empty!")

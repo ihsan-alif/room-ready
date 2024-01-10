@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/employee")
+@RequestMapping(path = "/api/employee")
 @RequiredArgsConstructor
 public class EmployeeController {
 
     private final EmployeeService service;
 
-    @GetMapping("/{employeeId}")
+    @GetMapping(path = "/{employeeId}")
     public ResponseEntity<WebResponse<EmployeeResponse>> getById(@PathVariable("employeeId") String id){
         EmployeeResponse byId = service.getById(id);
 

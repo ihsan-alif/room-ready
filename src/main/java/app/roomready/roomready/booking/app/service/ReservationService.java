@@ -7,12 +7,10 @@ import org.springframework.data.domain.Page;
 
 public interface ReservationService {
 
-    ReservationResponse create (ReservationRequest request);
+    Reservation create (ReservationRequest request);
     ReservationResponse findById (String request);
 
     Page<Reservation> getAll (ReservationRequest request);
-
-    void deleteById(String request);
 
     ReservationResponse update(ReservationRequest request);
 

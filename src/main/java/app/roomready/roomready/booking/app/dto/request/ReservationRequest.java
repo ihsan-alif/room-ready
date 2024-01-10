@@ -27,8 +27,8 @@ public class ReservationRequest {
 
     private String room;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date reservation;
 
-    private List<String> equipmentNeeds;
+    private String reservationDate;
+
+    private List<EquipmentRequest> equipmentNeeds;
 }

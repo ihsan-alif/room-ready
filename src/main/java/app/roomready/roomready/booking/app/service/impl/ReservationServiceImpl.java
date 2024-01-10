@@ -1,14 +1,14 @@
 package app.roomready.roomready.booking.app.service.impl;
 
+import app.roomready.roomready.booking.app.dto.request.EquipmentRequest;
 import app.roomready.roomready.booking.app.dto.request.ReservationRequest;
-import app.roomready.roomready.booking.app.dto.response.ApprovalResponse;
-import app.roomready.roomready.booking.app.dto.response.EmployeeResponse;
 import app.roomready.roomready.booking.app.dto.response.ReservationResponse;
 import app.roomready.roomready.booking.app.entity.*;
 import app.roomready.roomready.booking.app.repository.EquipmentNeedsRepository;
 import app.roomready.roomready.booking.app.repository.ReservationRepository;
 import app.roomready.roomready.booking.app.service.*;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,8 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Optional;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,31 +27,50 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepository reservationRepository;
     private final RoomService roomService;
     private final EmployeeService employeeService;
+    private final EquipmentNeedsService equipmentNeedsService;
     private final ApprovalService approvalService;
 
     private final EquipmentNeedsRepository equipmentNeedsRepository;
-
+    @SneakyThrows
     @Override
-    public ReservationResponse create(ReservationRequest request) {
+    public Reservation create(ReservationRequest request) {
         Room roomById = roomService.getById(request.getRoom());
         Employee employee = employeeService.get(request.getEmployee());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        format.setTimeZone(TimeZone.getTimeZone("Asia/Jakarta"));
+        Date date = format.parse(request.getReservationDate());
+        List<EquipmentNeeds> equipmentNeedsList = getEquipmentNeeds(request);
 
         Reservation reservation = Reservation.builder()
                 .room(roomById)
                 .status(roomById.getStatus())
-                .reservationDate(roomById.getReservation().getReservationDate())
+                .reservationDate(date)
+                .equipmentNeeds(equipmentNeedsList)
                 .employee(employee)
                 .build();
 
-        Reservation reservationSave = reservationRepository.save(reservation);
-
-        return ReservationResponse.builder()
+        return reservationRepository.save(reservation);
+                /*ReservationResponse.builder()
                 .employeeName(reservationSave.getEmployee().getName())
                 .reservation(reservationSave.getReservationDate())
                 .roomName(reservationSave.getRoom().getName())
                 .id(reservationSave.getId())
                 .equipmentNeeds(getEquipmentNames())
-                .build();
+                .build();*/
+    }
+
+    private List<EquipmentNeeds> getEquipmentNeeds(ReservationRequest request) {
+        List<EquipmentNeeds> equipmentNeedsList = new ArrayList<>();
+        for (EquipmentRequest equipmentRequest : request.getEquipmentNeeds()){
+            EquipmentNeeds equipmentNeeds = equipmentNeedsService.get(equipmentRequest.getId());
+            if (equipmentNeeds.getQuantity() - equipmentRequest.getQuantity() < 0){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "quantity exceeds");
+            }
+            equipmentNeeds.setQuantity(equipmentNeeds.getQuantity() - equipmentRequest.getQuantity());
+            equipmentNeedsService.update(equipmentNeeds);
+            equipmentNeedsList.add(equipmentNeeds);
+        }
+        return equipmentNeedsList;
     }
 
     @Override
@@ -78,12 +97,6 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationRepository.findAll(pageRequest);
     }
 
-    @Override
-    public void deleteById(String request) {
-        Optional<Reservation> byIdResult = reservationRepository.findById(request);
-        if (byIdResult.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Id Not Found");
-        reservationRepository.deleteById(request);
-    }
 
     @Override
     public ReservationResponse update(ReservationRequest request) {
