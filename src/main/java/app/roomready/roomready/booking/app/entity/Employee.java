@@ -26,6 +26,9 @@ public class Employee extends DateTime{
     @Column(name = "contact_info")
     private String contactInfo;
 
+    @Column(name = "avatar_file_name")
+    private String avatarFileName;
+
     @OneToOne
     @JoinColumn(name = "user_id")
     private UserCredential userCredential;
