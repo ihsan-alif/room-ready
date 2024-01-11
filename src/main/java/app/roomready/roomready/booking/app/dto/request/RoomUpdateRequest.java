@@ -20,6 +20,7 @@ public class RoomUpdateRequest {
     @Min(value = 1, message = "capacities must be greater than or equal to 1")
     private Integer capacities;
     @NotNull(message = "status is required")
-    private Boolean status;
+    @Pattern(regexp = "^(available|booked)$", message = "status must be 'available' or 'booked'")
+    private String status;
     private String facilities;
 }

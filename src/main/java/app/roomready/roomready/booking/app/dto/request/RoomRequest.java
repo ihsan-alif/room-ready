@@ -1,9 +1,6 @@
 package app.roomready.roomready.booking.app.dto.request;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Getter
@@ -18,6 +15,7 @@ public class RoomRequest {
     @Min(value = 1, message = "value must be greater than or equal to 1")
     private Integer capacities;
     @NotNull(message = "status is required")
-    private Boolean status;
+    @Pattern(regexp = "^(available|booked)$", message = "status must be 'available' or 'booked'")
+    private String status;
     private String facilities;
 }

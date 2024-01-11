@@ -1,5 +1,6 @@
 package app.roomready.roomready.booking.app.dto.request;
 
+import app.roomready.roomready.booking.app.constant.ERoom;
 import lombok.*;
 
 @Getter
@@ -11,5 +12,5 @@ public class SearchRoomRequest {
     private Integer page;
     private Integer size;
     private String name;
-    private Boolean status;
+    private String status;
 }
