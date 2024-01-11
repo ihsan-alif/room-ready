@@ -33,7 +33,7 @@ public class Reservation {
 
     @OneToOne(mappedBy = "reservation")
     @JsonManagedReference
-    private RoomResponse room;
+    private Room room;
 
     @OneToOne(mappedBy = "reservation")
     @JsonManagedReference

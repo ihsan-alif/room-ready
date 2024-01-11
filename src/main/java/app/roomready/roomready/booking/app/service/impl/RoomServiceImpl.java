@@ -48,9 +48,8 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     @Transactional(readOnly = true)
-    public RoomResponse getById(String id) {
-        Room room = findByIdOrThrowNotFound(id);
-        return toRoomResponse(room);
+    public Room getById(String id) {
+        return findByIdOrThrowNotFound(id);
     }
 
     @Override

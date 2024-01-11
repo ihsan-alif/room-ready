@@ -35,7 +35,7 @@ public class ReservationServiceImpl implements ReservationService {
     @SneakyThrows
     @Override
     public Reservation create(ReservationRequest request) {
-        RoomResponse roomById = roomService.getById(request.getRoom());
+        Room roomById = roomService.getById(request.getRoom());
         Employee employee = employeeService.get(request.getEmployee());
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         format.setTimeZone(TimeZone.getTimeZone("Asia/Jakarta"));

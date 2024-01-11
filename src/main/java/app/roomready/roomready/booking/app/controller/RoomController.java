@@ -39,11 +39,11 @@ public class RoomController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> getRoomById(@RequestParam String id){
-        RoomResponse roomResponse = roomService.getById(id);
-        WebResponse<RoomResponse> response = WebResponse.<RoomResponse>builder()
+        Room room = roomService.getById(id);
+        WebResponse<Room> response = WebResponse.<Room>builder()
                 .status(HttpStatus.OK.getReasonPhrase())
                 .message("successfully get room by id")
-                .data(roomResponse)
+                .data(room)
                 .build();
 
         return ResponseEntity.ok(response);
