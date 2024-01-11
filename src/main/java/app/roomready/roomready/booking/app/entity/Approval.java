@@ -1,12 +1,11 @@
 package app.roomready.roomready.booking.app.entity;
 
+import app.roomready.roomready.booking.app.constant.ERoom;
+import app.roomready.roomready.booking.app.constant.ETrans;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
@@ -15,6 +14,7 @@ import java.util.Date;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Approval {
 
     @Id
@@ -26,14 +26,18 @@ public class Approval {
     @Temporal(TemporalType.TIMESTAMP)
     private Date approval;
 
-    @Column(name = "approval_status")
-    private Boolean status;
+    private String employeeName;
 
-    private String rejection;
+//    @Column(length = 25)
+    @Enumerated(EnumType.STRING)
+    private ERoom statusRoom;
+    @Enumerated(EnumType.STRING)
+//    @Column(length = 25)
+    private ETrans acceptanceStatus;
 
-    @OneToOne
-    @JoinColumn(name = "reservation_id",referencedColumnName = "id")
-    @JsonBackReference
-    @JsonIgnore
-    private Reservation reservation;
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "reservation_id", referencedColumnName = "id")
+//    @JsonBackReference
+//    @JsonIgnore
+//    private Reservation reservation;
 }

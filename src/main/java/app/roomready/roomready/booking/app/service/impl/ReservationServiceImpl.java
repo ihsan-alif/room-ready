@@ -2,6 +2,7 @@ package app.roomready.roomready.booking.app.service.impl;
 
 import app.roomready.roomready.booking.app.constant.ETrans;
 import app.roomready.roomready.booking.app.dto.request.ListEquipment;
+import app.roomready.roomready.booking.app.dto.request.ReservationGetAllRequest;
 import app.roomready.roomready.booking.app.dto.request.ReservationRequest;
 import app.roomready.roomready.booking.app.dto.response.EquipmentNeedsResponse;
 import app.roomready.roomready.booking.app.dto.response.ReservationResponse;
@@ -33,6 +34,8 @@ public class ReservationServiceImpl implements ReservationService {
 
     private final EquipmentNeedsService equipmentNeedsService;
 
+    private final ApprovalService approvalService;
+
     private final EquipmentNeedsRepository equipmentNeedsRepository;
 
     @SneakyThrows
@@ -40,6 +43,8 @@ public class ReservationServiceImpl implements ReservationService {
     public ReservationResponse create(ReservationRequest request) {
         Room roomById = roomService.get(request.getRoomId());
         Employee employee = employeeService.get(request.getEmployeeId());
+
+//        Reservation reservationOptional = reservationRepository.findById(request.getId().getId()).orElseThrow();
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd, HH:mm:ss");
 
@@ -78,9 +83,16 @@ public class ReservationServiceImpl implements ReservationService {
             equipments.add(response);
         }
 
+        Approval approval = Approval.builder()
+                .approval(reservation.getReservationDate())
+                .acceptanceStatus(reservation.getStatus())
+                        .statusRoom(roomById.getStatus())
+                                        .build();
+        approvalService.create(approval);
+
         return  ReservationResponse.builder()
                 .id(reservation.getId())
-                .employeeName(reservation.getEmployee().getName())
+                .employeeName(request.getEmployeeName())
                 .roomName(reservation.getRoom().getName())
                 .reservationDate(date)
                 .status(reservation.getStatus().getDisplayValue())
@@ -99,7 +111,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public Page<Reservation> getAll(ReservationRequest request) {
+    public Page<Reservation> getAll(ReservationGetAllRequest request) {
         if (request.getPage() <= 0) request.setPage(1);
         Pageable pageable = PageRequest.of(
                 (request.getPage() - 1), request.getSize()
@@ -108,6 +120,7 @@ public class ReservationServiceImpl implements ReservationService {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         return reservationRepository.findAll(pageRequest);
     }
+
 
 
     @Override

@@ -1,5 +1,6 @@
 package app.roomready.roomready.booking.app.entity;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,6 +26,7 @@ public class Employee extends DateTime{
 
     @Column(name = "contact_info")
     private String contactInfo;
+
 
     @Column(name = "avatar_file_name")
     private String avatarFileName;

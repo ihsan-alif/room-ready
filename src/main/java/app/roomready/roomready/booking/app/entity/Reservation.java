@@ -1,5 +1,6 @@
 package app.roomready.roomready.booking.app.entity;
 
+
 import app.roomready.roomready.booking.app.constant.ETrans;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,6 +23,7 @@ public class Reservation {
     private Date reservationDate;
 
     @Enumerated(EnumType.STRING)
+//    @Column(length = 25)
     private ETrans status;
 
     @Column(name = "rejection_reason")

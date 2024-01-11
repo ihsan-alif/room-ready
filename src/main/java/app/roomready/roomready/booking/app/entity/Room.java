@@ -21,9 +21,11 @@ public class Room {
     private Integer capacities;
 
     @Enumerated(EnumType.STRING)
+//    @Column(length = 25)
     private ERoom status;
 
 //    private Boolean status;
 
     private String facilities;
+
 }

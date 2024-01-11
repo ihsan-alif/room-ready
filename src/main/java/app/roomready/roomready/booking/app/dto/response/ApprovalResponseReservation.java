@@ -1,6 +1,5 @@
 package app.roomready.roomready.booking.app.dto.response;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
@@ -12,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReservationResponse {
+public class ApprovalResponseReservation {
 
     private String id;
 
