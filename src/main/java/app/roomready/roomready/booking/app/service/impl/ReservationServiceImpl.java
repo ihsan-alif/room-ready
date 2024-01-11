@@ -44,6 +44,8 @@ public class ReservationServiceImpl implements ReservationService {
         Room roomById = roomService.get(request.getRoomId());
         Employee employee = employeeService.get(request.getEmployeeId());
 
+//        Reservation reservationOptional = reservationRepository.findById(request.getId().getId()).orElseThrow();
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd, HH:mm:ss");
 
         Date date = dateFormat.parse(request.getReservationDate());
@@ -83,15 +85,14 @@ public class ReservationServiceImpl implements ReservationService {
 
         Approval approval = Approval.builder()
                 .approval(reservation.getReservationDate())
-                .rejection(reservation.getStatus())
-                .status(ETrans.PENDING)
-                .reservation(reservation)
-                .build();
+                .acceptanceStatus(reservation.getStatus())
+                        .statusRoom(roomById.getStatus())
+                                        .build();
         approvalService.create(approval);
 
         return  ReservationResponse.builder()
                 .id(reservation.getId())
-                .employeeName(reservation.getEmployee().getName())
+                .employeeName(request.getEmployeeName())
                 .roomName(reservation.getRoom().getName())
                 .reservationDate(date)
                 .status(reservation.getStatus().getDisplayValue())

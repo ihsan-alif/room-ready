@@ -1,7 +1,9 @@
 package app.roomready.roomready.booking.app.controller;
 
 import app.roomready.roomready.booking.app.dto.request.ApprovalRequest;
+import app.roomready.roomready.booking.app.dto.request.ApprovalRequestReservation;
 import app.roomready.roomready.booking.app.dto.response.ApprovalResponse;
+import app.roomready.roomready.booking.app.dto.response.ApprovalResponseReservation;
 import app.roomready.roomready.booking.app.dto.response.PagingResponse;
 import app.roomready.roomready.booking.app.dto.response.WebResponse;
 import app.roomready.roomready.booking.app.entity.Approval;
@@ -66,16 +68,16 @@ public class ApprovalController {
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_GA')")
     public ResponseEntity<?> getApprovalById(@PathVariable String id){
-        ApprovalResponse byId = approvalService.getById(id);
+        Approval byId = approvalService.getById(id);
         return ResponseEntity.ok(byId);
     }
 
-//    @PutMapping
-//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_GA')")
-//    public ResponseEntity<?> updateApproval(@RequestBody Approval request){
-//        ApprovalResponse approval = approvalService.updateCustomer(request);
-//        return ResponseEntity.ok(approval);
-//    }
+    @PutMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_GA')")
+    public ResponseEntity<?> updateApproval(@RequestBody ApprovalRequestReservation request){
+        approvalService.updateStatus(request);
+        return ResponseEntity.ok("Succed");
+    }
 
     @DeleteMapping(path = "/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_GA')")

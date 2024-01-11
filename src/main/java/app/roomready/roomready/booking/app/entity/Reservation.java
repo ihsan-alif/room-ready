@@ -23,6 +23,7 @@ public class Reservation {
     private Date reservationDate;
 
     @Enumerated(EnumType.STRING)
+//    @Column(length = 25)
     private ETrans status;
 
     @Column(name = "rejection_reason")
@@ -33,10 +34,6 @@ public class Reservation {
     @OneToOne
     @JoinColumn(name = "employee_id")
     private Employee employee;
-//    @OneToOne(mappedBy = "reservation")
-//    @JsonManagedReference
-//    @JsonIgnore
-//    private USer employee;
 
     @OneToOne
     @JoinColumn(name = "room_id")

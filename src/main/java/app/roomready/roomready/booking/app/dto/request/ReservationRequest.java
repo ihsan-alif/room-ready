@@ -25,6 +25,7 @@ public class ReservationRequest {
     private String id;
 
     private String employeeId;
+    private String employeeName;
 
 
     private String roomId;
