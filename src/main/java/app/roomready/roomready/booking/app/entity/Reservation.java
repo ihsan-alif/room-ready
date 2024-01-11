@@ -1,5 +1,6 @@
 package app.roomready.roomready.booking.app.entity;
 
+import app.roomready.roomready.booking.app.dto.response.RoomResponse;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;

@@ -3,6 +3,7 @@ package app.roomready.roomready.booking.app.service.impl;
 import app.roomready.roomready.booking.app.dto.request.EquipmentRequest;
 import app.roomready.roomready.booking.app.dto.request.ReservationRequest;
 import app.roomready.roomready.booking.app.dto.response.ReservationResponse;
+import app.roomready.roomready.booking.app.dto.response.RoomResponse;
 import app.roomready.roomready.booking.app.entity.*;
 import app.roomready.roomready.booking.app.repository.EquipmentNeedsRepository;
 import app.roomready.roomready.booking.app.repository.ReservationRepository;
