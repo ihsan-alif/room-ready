@@ -1,13 +1,10 @@
 package app.roomready.roomready.booking.app.entity;
 
-import app.roomready.roomready.booking.app.dto.response.RoomResponse;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import app.roomready.roomready.booking.app.constant.ETrans;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Setter
@@ -24,23 +21,24 @@ public class Reservation {
     @Column(name = "reservation_date")
     private Date reservationDate;
 
-    private Boolean status = false;
+    @Enumerated(EnumType.STRING)
+    private ETrans status;
 
+    @Column(name = "rejection_reason")
+    private String rejectionReason;
 
-    @OneToOne(mappedBy = "reservation")
-    @JsonManagedReference
+    private Integer quantity;
+
+    @OneToOne
+    @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    @OneToOne(mappedBy = "reservation")
-    @JsonManagedReference
+    @OneToOne
+    @JoinColumn(name = "room_id")
     private Room room;
 
-    @OneToOne(mappedBy = "reservation")
-    @JsonManagedReference
-    private Approval approval;
-
-    @OneToMany(mappedBy = "reservation")
-    @JsonManagedReference
-    private List<EquipmentNeeds> equipmentNeeds;
+    @ManyToOne
+    @JoinColumn(name = "equipment_needs_id")
+    private EquipmentNeeds equipmentNeeds;
 
 }

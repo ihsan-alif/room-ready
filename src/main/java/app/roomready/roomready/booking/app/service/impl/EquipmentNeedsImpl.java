@@ -44,7 +44,7 @@ public class EquipmentNeedsImpl implements EquipmentNeedsService {
 
         EquipmentNeeds equipmentNeeds = EquipmentNeeds.builder()
                 .name(request.getName())
-                .quantity(request.getQuantity())
+                .stock(request.getStock())
                 .build();
 
         repository.save(equipmentNeeds);
@@ -82,7 +82,7 @@ public class EquipmentNeedsImpl implements EquipmentNeedsService {
         );
 
         equipmentNeeds.setName(request.getName());
-        equipmentNeeds.setQuantity(request.getQuantity());
+        equipmentNeeds.setStock(request.getStock());
 
         repository.save(equipmentNeeds);
 
@@ -128,8 +128,8 @@ public class EquipmentNeedsImpl implements EquipmentNeedsService {
                 predicates.add(criteriaBuilder.like(root.get("name"), "%"+ request.getName()+"%"));
             }
 
-            if (Objects.nonNull(request.getQuantity())) {
-                predicates.add(criteriaBuilder.equal(root.get("quantity"), request.getQuantity()));
+            if (Objects.nonNull(request.getStock())) {
+                predicates.add(criteriaBuilder.equal(root.get("stock"), request.getStock()));
             }
 
             return query.where(predicates.toArray(new Predicate[]{})).getRestriction();
@@ -141,7 +141,7 @@ public class EquipmentNeedsImpl implements EquipmentNeedsService {
         return EquipmentNeedsResponse.builder()
                 .id(equipmentNeeds.getId())
                 .name(equipmentNeeds.getName())
-                .quantity(equipmentNeeds.getQuantity())
+                .stock(equipmentNeeds.getStock())
                 .build();
     }
 }

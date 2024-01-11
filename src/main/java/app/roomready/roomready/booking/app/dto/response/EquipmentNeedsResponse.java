@@ -13,5 +13,5 @@ public class EquipmentNeedsResponse {
 
     private String name;
 
-    private Integer quantity;
+    private Long stock;
 }
