@@ -56,22 +56,8 @@ public class ApprovalServiceImpl implements ApprovalService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ApprovalResponse create(ApprovalRequest request) {
-        Approval approvalById = approvalRepository.findById(request.getId()).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Id Not Found")
-        );
-
-
-        Approval save = approvalRepository.save(approvalById);
-
-        UserCredential userCredential = userService.loadUserById(request.getIdName());
-        return ApprovalResponse.builder()
-                .date(save.getApproval().toString())
-                .id(save.getId())
-                .name(userCredential.getUsername())
-                .status(save.getStatus())
-                .acceptance(save.getRejection())
-                .build();
+    public void  create(Approval request) {
+        approvalRepository.save(request);
     }
 
     @Override

@@ -12,7 +12,7 @@ public interface ApprovalService {
 
     ApprovalResponse getById(String request);
 
-    ApprovalResponse create(ApprovalRequest request);
+    void create(Approval request);
 
     void deleteById(String request);
 

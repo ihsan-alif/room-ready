@@ -50,14 +50,14 @@ public class ApprovalController {
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_GA')")
-    public ResponseEntity<?> createApproval(@RequestBody ApprovalRequest request){
+    public ResponseEntity<?> createApproval(@RequestBody Approval request){
 
-        ApprovalResponse approvalResponse = approvalService.create(request);
+        approvalService.create(request);
 
         WebResponse<?> webResponse = WebResponse.builder()
                 .message("Succes Create Approval")
                 .status(HttpStatus.CREATED.getReasonPhrase())
-                .data(approvalResponse)
+                .data("Succeed")
                 .build();
         return ResponseEntity.ok(webResponse);
     }

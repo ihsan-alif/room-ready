@@ -1,5 +1,6 @@
 package app.roomready.roomready.booking.app.entity;
 
+import app.roomready.roomready.booking.app.constant.ETrans;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -25,9 +26,11 @@ public class Approval {
     private Date approval;
 
     @Column(name = "approval_status")
-    private Boolean status;
+    @Enumerated(EnumType.STRING)
+    private ETrans status;
+    @Enumerated(EnumType.STRING)
 
-    private String rejection;
+    private ETrans rejection;
 
     @OneToOne
     @JoinColumn(name = "reservation_id",referencedColumnName = "id")

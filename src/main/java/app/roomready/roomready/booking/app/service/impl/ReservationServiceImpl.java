@@ -34,6 +34,8 @@ public class ReservationServiceImpl implements ReservationService {
 
     private final EquipmentNeedsService equipmentNeedsService;
 
+    private final ApprovalService approvalService;
+
     private final EquipmentNeedsRepository equipmentNeedsRepository;
 
     @SneakyThrows
@@ -78,6 +80,14 @@ public class ReservationServiceImpl implements ReservationService {
 
             equipments.add(response);
         }
+
+        Approval approval = Approval.builder()
+                .approval(reservation.getReservationDate())
+                .rejection(reservation.getStatus())
+                .status(ETrans.PENDING)
+                .reservation(reservation)
+                .build();
+        approvalService.create(approval);
 
         return  ReservationResponse.builder()
                 .id(reservation.getId())
