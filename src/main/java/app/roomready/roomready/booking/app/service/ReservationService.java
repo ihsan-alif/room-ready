@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface ReservationService {
 
-    Reservation create (ReservationRequest request);
+    ReservationResponse create (ReservationRequest request);
     ReservationResponse findById (String request);
 
     Page<Reservation> getAll (ReservationGetAllRequest request);

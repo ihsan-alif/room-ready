@@ -35,7 +35,6 @@ public class RoomServiceImpl implements RoomService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public RoomResponse createNew(RoomRequest request) {
-        try {
             validationUtils.validate(request);
             Room room = Room.builder()
                     .name(request.getName())
@@ -45,16 +44,12 @@ public class RoomServiceImpl implements RoomService {
                     .build();
             room = roomRepository.save(room);
             return toRoomResponse(room);
-        }catch (DataIntegrityViolationException e){
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "room name already exist");
-        }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public RoomResponse getById(String id) {
-        Room room = findByIdOrThrowNotFound(id);
-        return toRoomResponse(room);
+    public Room getById(String id) {
+        return findByIdOrThrowNotFound(id);
     }
 
     @Override
@@ -113,6 +108,12 @@ public class RoomServiceImpl implements RoomService {
         roomRepository.delete(room);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class, readOnly = true)
+    public Room get(String id) {
+        return findByIdOrThrowNotFound(id);
+    }
+
     private Room findByIdOrThrowNotFound(String id){
         return roomRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "room not found"));
@@ -135,6 +136,10 @@ public class RoomServiceImpl implements RoomService {
             if (request.getName() != null){
                 Predicate predicateName = criteriaBuilder.like(root.get("name"), "%" + request.getName().toLowerCase() + "%");
                 predicates.add(predicateName);
+            }
+            if(request.getStatus() != null){
+                Predicate predicateStatus = criteriaBuilder.equal(root.get("status"), request.getStatus());
+                predicates.add(predicateStatus);
             }
             return query.where(predicates.toArray(new Predicate[]{})).getRestriction();
         };

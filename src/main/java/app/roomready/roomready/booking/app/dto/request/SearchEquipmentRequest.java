@@ -11,7 +11,7 @@ public class SearchEquipmentRequest {
 
     private String name;
 
-    private Integer quantity;
+    private Long stock;
 
     private Integer page;
 

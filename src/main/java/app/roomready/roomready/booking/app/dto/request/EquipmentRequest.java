@@ -19,5 +19,5 @@ public class EquipmentRequest {
     private String name;
 
     @NotNull(message = "Quantity has not be null!")
-    private Integer quantity;
+    private Long stock;
 }

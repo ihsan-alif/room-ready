@@ -1,8 +1,7 @@
 package app.roomready.roomready.booking.app.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.util.Date;
@@ -15,17 +14,16 @@ import java.util.List;
 @Builder
 public class ReservationResponse {
 
-    @JsonIgnore
     private String id;
 
     private String employeeName;
 
     private String roomName;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date reservation;
+    @JsonFormat(pattern = "yyyy/MM/dd, HH:mm:ss", timezone = "Asia/Jakarta")
+    private Date reservationDate;
 
-    private Boolean status;
+    private String status;
 
-    private List<String> equipmentNeeds;
+    private List<EquipmentNeedsResponse> equipmentNeeds;
 }

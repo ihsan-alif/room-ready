@@ -50,23 +50,6 @@ public class EquipmentNeedsController {
         return ResponseEntity.ok(response);
     }
 
-   /* @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<WebResponse<EquipmentNeedsResponse>> update(@PathVariable("id") String id,
-                                                                      @RequestBody EquipmentRequest request){
-        request.setId(id);
-
-        //EquipmentNeedsResponse update = service.update(request);
-
-        *//*WebResponse<EquipmentNeedsResponse> response = WebResponse.<EquipmentNeedsResponse>builder()
-                .status(HttpStatus.OK.getReasonPhrase())
-                .message("successfully update equipment needs")
-                .data(update)
-                .build();
-
-        return ResponseEntity.ok(response);*//*
-    }
-*/
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<WebResponse<String>> delete(@PathVariable("id") String id){
@@ -84,12 +67,12 @@ public class EquipmentNeedsController {
     @GetMapping("/")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<WebResponse<List<EquipmentNeedsResponse>>> search(@RequestParam(name = "name", required = false) String name,
-                                                                            @RequestParam(name = "quantity", required = false) Integer quantity,
+                                                                            @RequestParam(name = "stock", required = false) Long stock,
                                                                             @RequestParam(name = "page", defaultValue = "1") Integer page,
                                                                             @RequestParam(name = "size", defaultValue = "10") Integer size){
         SearchEquipmentRequest request = SearchEquipmentRequest.builder()
                 .name(name)
-                .quantity(quantity)
+                .stock(stock)
                 .page(page)
                 .size(size)
                 .build();

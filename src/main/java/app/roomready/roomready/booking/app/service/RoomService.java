@@ -7,14 +7,14 @@ import app.roomready.roomready.booking.app.dto.response.WebResponse;
 import app.roomready.roomready.booking.app.entity.Room;
 import app.roomready.roomready.booking.app.dto.request.SearchRoomRequest;
 
-import org.springframework.data.domain.Page;
-
 import java.util.List;
 
 public interface RoomService {
     RoomResponse createNew(RoomRequest request);
-    RoomResponse getById(String id);
+    Room getById(String id);
     WebResponse<List<RoomResponse>> getAll(SearchRoomRequest request);
     RoomResponse update(RoomUpdateRequest request);
     void deleteById(String id);
+
+    Room get(String id);
 }
