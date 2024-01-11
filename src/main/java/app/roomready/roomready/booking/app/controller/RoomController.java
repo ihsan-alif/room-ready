@@ -24,7 +24,7 @@ public class RoomController {
     private final RoomService roomService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> createNewRoom(@RequestBody RoomRequest request){
         RoomResponse roomResponse = roomService.createNew(request);
 
@@ -38,7 +38,6 @@ public class RoomController {
     }
 
     @GetMapping(path = "/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','GA')")
     public ResponseEntity<?> getRoomById(@RequestParam String id){
         RoomResponse roomResponse = roomService.getById(id);
         WebResponse<RoomResponse> response = WebResponse.<RoomResponse>builder()
@@ -51,16 +50,17 @@ public class RoomController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','GA)")
     public ResponseEntity<?> getAll(
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
-            @RequestParam(required = false) String name
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Boolean status
     ){
         SearchRoomRequest request = SearchRoomRequest.builder()
                 .page(page)
                 .size(size)
                 .name(name)
+                .status(status)
                 .build();
 
         WebResponse<?> response = roomService.getAll(request);
@@ -69,7 +69,7 @@ public class RoomController {
     }
 
     @DeleteMapping(path = "/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_GA')")
     public ResponseEntity<?> deleteRoomById(@RequestParam String id){
         roomService.deleteById(id);
 
@@ -83,7 +83,7 @@ public class RoomController {
     }
 
     @PutMapping
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_GA')")
     public ResponseEntity<?> updateRoom(@RequestBody RoomUpdateRequest request){
         RoomResponse updatedRoom = roomService.update(request);
         WebResponse<?> response = WebResponse.builder()

@@ -35,7 +35,6 @@ public class RoomServiceImpl implements RoomService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public RoomResponse createNew(RoomRequest request) {
-        try {
             validationUtils.validate(request);
             Room room = Room.builder()
                     .name(request.getName())
@@ -45,9 +44,6 @@ public class RoomServiceImpl implements RoomService {
                     .build();
             room = roomRepository.save(room);
             return toRoomResponse(room);
-        }catch (DataIntegrityViolationException e){
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "room name already exist");
-        }
     }
 
     @Override
@@ -135,6 +131,10 @@ public class RoomServiceImpl implements RoomService {
             if (request.getName() != null){
                 Predicate predicateName = criteriaBuilder.like(root.get("name"), "%" + request.getName().toLowerCase() + "%");
                 predicates.add(predicateName);
+            }
+            if(request.getStatus() != null){
+                Predicate predicateStatus = criteriaBuilder.equal(root.get("status"), request.getStatus());
+                predicates.add(predicateStatus);
             }
             return query.where(predicates.toArray(new Predicate[]{})).getRestriction();
         };
