@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface RoomService {
     RoomResponse createNew(RoomRequest request);
-    Room getById(String id);
+    RoomResponse getById(String id);
     WebResponse<List<RoomResponse>> getAll(SearchRoomRequest request);
     RoomResponse update(RoomUpdateRequest request);
     void deleteById(String id);

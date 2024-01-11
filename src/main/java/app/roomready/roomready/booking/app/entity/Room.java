@@ -1,5 +1,6 @@
 package app.roomready.roomready.booking.app.entity;
 
+import app.roomready.roomready.booking.app.constant.ERoom;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,7 +20,10 @@ public class Room {
 
     private Integer capacities;
 
-    private Boolean status;
+    @Enumerated(EnumType.STRING)
+    private ERoom status;
+
+//    private Boolean status;
 
     private String facilities;
 
