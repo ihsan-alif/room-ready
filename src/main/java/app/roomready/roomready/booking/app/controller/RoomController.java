@@ -69,7 +69,7 @@ public class RoomController {
     }
 
     @DeleteMapping(path = "/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_GA')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> deleteRoomById(@RequestParam String id){
         roomService.deleteById(id);
 

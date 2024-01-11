@@ -14,7 +14,7 @@ public interface EquipmentNeedsService {
 
     EquipmentNeeds get(String id);
 
-    EquipmentNeedsResponse update(EquipmentRequest request);
+    EquipmentNeedsResponse update(EquipmentNeeds request);
 
     void delete(String id);
 

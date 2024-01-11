@@ -20,14 +20,13 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/employee")
+@RequestMapping(path = "/api/employee")
 @RequiredArgsConstructor
 public class EmployeeController {
 
     private final EmployeeService service;
 
-    @GetMapping("/{employeeId}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @GetMapping(path = "/{employeeId}")
     public ResponseEntity<WebResponse<EmployeeResponse>> getById(@PathVariable("employeeId") String id){
         EmployeeResponse byId = service.getById(id);
 
@@ -41,7 +40,6 @@ public class EmployeeController {
     }
 
     @PutMapping("/{employeeId}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<WebResponse<EmployeeResponse>> update(@PathVariable("employeeId") String id,
                                                                 @RequestBody UpdateEmployeeRequest request){
         request.setId(id);
@@ -58,7 +56,6 @@ public class EmployeeController {
     }
 
     @DeleteMapping("/{employeeId}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<WebResponse<String>> delete(@PathVariable("employeeId") String id){
         service.delete(id);
 

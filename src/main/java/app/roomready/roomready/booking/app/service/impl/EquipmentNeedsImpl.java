@@ -73,7 +73,7 @@ public class EquipmentNeedsImpl implements EquipmentNeedsService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public EquipmentNeedsResponse update(EquipmentRequest request) {
+    public EquipmentNeedsResponse update(EquipmentNeeds request) {
 
         utils.validate(request);
 

@@ -1,5 +1,6 @@
 package app.roomready.roomready.booking.app.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,4 +33,9 @@ public class Employee extends DateTime{
     @OneToOne
     @JoinColumn(name = "user_id")
     private UserCredential userCredential;
+
+    @OneToOne
+    @JoinColumn(name = "reservation_id",referencedColumnName = "id")
+    @JsonBackReference
+    private Reservation reservation;
 }
