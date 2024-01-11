@@ -108,6 +108,12 @@ public class RoomServiceImpl implements RoomService {
         roomRepository.delete(room);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class, readOnly = true)
+    public Room get(String id) {
+        return findByIdOrThrowNotFound(id);
+    }
+
     private Room findByIdOrThrowNotFound(String id){
         return roomRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "room not found"));

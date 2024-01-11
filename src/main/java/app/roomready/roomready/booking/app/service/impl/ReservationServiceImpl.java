@@ -1,9 +1,10 @@
 package app.roomready.roomready.booking.app.service.impl;
 
-import app.roomready.roomready.booking.app.dto.request.EquipmentRequest;
+import app.roomready.roomready.booking.app.constant.ETrans;
+import app.roomready.roomready.booking.app.dto.request.ListEquipment;
 import app.roomready.roomready.booking.app.dto.request.ReservationRequest;
+import app.roomready.roomready.booking.app.dto.response.EquipmentNeedsResponse;
 import app.roomready.roomready.booking.app.dto.response.ReservationResponse;
-import app.roomready.roomready.booking.app.dto.response.RoomResponse;
 import app.roomready.roomready.booking.app.entity.*;
 import app.roomready.roomready.booking.app.repository.EquipmentNeedsRepository;
 import app.roomready.roomready.booking.app.repository.ReservationRepository;
@@ -19,70 +20,81 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationRepository reservationRepository;
+
     private final RoomService roomService;
+
     private final EmployeeService employeeService;
+
     private final EquipmentNeedsService equipmentNeedsService;
-    private final ApprovalService approvalService;
 
     private final EquipmentNeedsRepository equipmentNeedsRepository;
+
     @SneakyThrows
     @Override
-    public Reservation create(ReservationRequest request) {
-        Room roomById = roomService.getById(request.getRoom());
-        Employee employee = employeeService.get(request.getEmployee());
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        format.setTimeZone(TimeZone.getTimeZone("Asia/Jakarta"));
-        Date date = format.parse(request.getReservationDate());
-        List<EquipmentNeeds> equipmentNeedsList = getEquipmentNeeds(request);
+    public ReservationResponse create(ReservationRequest request) {
+        Room roomById = roomService.get(request.getRoomId());
+        Employee employee = employeeService.get(request.getEmployeeId());
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd, HH:mm:ss");
+
+        Date date = dateFormat.parse(request.getReservationDate());
 
         Reservation reservation = Reservation.builder()
                 .room(roomById)
-                .status(roomById.getStatus())
+                .status(ETrans.PENDING)
                 .reservationDate(date)
-                .equipmentNeeds(equipmentNeedsList)
                 .employee(employee)
                 .build();
 
-        return reservationRepository.save(reservation);
-                /*ReservationResponse.builder()
-                .employeeName(reservationSave.getEmployee().getName())
-                .reservation(reservationSave.getReservationDate())
-                .roomName(reservationSave.getRoom().getName())
-                .id(reservationSave.getId())
-                .equipmentNeeds(getEquipmentNames())
-                .build();*/
-    }
+        List<EquipmentNeedsResponse> equipments = new ArrayList<>();
 
-    private List<EquipmentNeeds> getEquipmentNeeds(ReservationRequest request) {
-        List<EquipmentNeeds> equipmentNeedsList = new ArrayList<>();
-        for (EquipmentRequest equipmentRequest : request.getEquipmentNeeds()){
-            EquipmentNeeds equipmentNeeds = equipmentNeedsService.get(equipmentRequest.getId());
-            if (equipmentNeeds.getQuantity() - equipmentRequest.getQuantity() < 0){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "quantity exceeds");
+        for (ListEquipment equipment : request.getEquipmentNeeds()){
+            EquipmentNeeds equipmentNeeds = equipmentNeedsService.get(equipment.getEquipmentId());
+
+            reservation.setEquipmentNeeds(equipmentNeeds);
+            reservation.setQuantity(equipment.getQuantity());
+
+            if (equipmentNeeds.getStock() - reservation.getQuantity() < 0){
+                throw  new ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantity exceeds Stock");
             }
-            equipmentNeeds.setQuantity(equipmentNeeds.getQuantity() - equipmentRequest.getQuantity());
+
+            equipmentNeeds.setStock(equipmentNeeds.getStock() - reservation.getQuantity());
             equipmentNeedsService.update(equipmentNeeds);
-            equipmentNeedsList.add(equipmentNeeds);
+
+            reservationRepository.save(reservation);
+
+            EquipmentNeedsResponse response = EquipmentNeedsResponse.builder()
+                    .id(reservation.getEquipmentNeeds().getId())
+                    .name(reservation.getEquipmentNeeds().getName())
+                    .stock(reservation.getEquipmentNeeds().getStock())
+                    .build();
+
+            equipments.add(response);
         }
-        return equipmentNeedsList;
+
+        return  ReservationResponse.builder()
+                .id(reservation.getId())
+                .employeeName(reservation.getEmployee().getName())
+                .roomName(reservation.getRoom().getName())
+                .reservationDate(date)
+                .status(reservation.getStatus().getDisplayValue())
+                .equipmentNeeds(equipments)
+                .build();
     }
 
     public ReservationResponse findById(String id) {
         Optional<Reservation> byId = reservationRepository.findById(id);
         byId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reservation not found"));
         return ReservationResponse.builder()
-                .reservation(byId.get().getReservationDate())
+                .reservationDate(byId.get().getReservationDate())
                 .employeeName(byId.get().getEmployee().getName())
-                .status(byId.get().getStatus())
                 .roomName(byId.get().getRoom().getName())
-                .equipmentNeeds(getEquipmentNames())
                 .build();
     }
 
@@ -105,18 +117,9 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservationSave = reservationRepository.save(byIdFind.get());
         return ReservationResponse.builder()
                 .employeeName(reservationSave.getEmployee().getName())
-                .reservation(reservationSave.getReservationDate())
+                .reservationDate(reservationSave.getReservationDate())
                 .roomName(reservationSave.getRoom().getName())
                 .id(reservationSave.getId())
-                .equipmentNeeds(getEquipmentNames())
                 .build();
-    }
-
-
-    public List<String> getEquipmentNames() {
-        List<EquipmentNeeds> equipmentNeedsList = equipmentNeedsRepository.findAll();
-        return equipmentNeedsList.stream()
-                .map(EquipmentNeeds::getName)
-                .collect(Collectors.toList());
     }
 }

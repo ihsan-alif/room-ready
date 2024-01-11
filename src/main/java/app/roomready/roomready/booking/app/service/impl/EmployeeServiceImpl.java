@@ -86,6 +86,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class, readOnly = true)
     public Employee get(String id) {
         Employee employee = repository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found")

@@ -19,11 +19,11 @@ public class ReservationController {
     private final ReservationService reservationService;
     @PostMapping
     public ResponseEntity<?> createReservation(@RequestBody ReservationRequest request){
-        Reservation reservation = reservationService.create(request);
-        WebResponse<Reservation> response = WebResponse.<Reservation>builder()
+        ReservationResponse reservationResponse = reservationService.create(request);
+        WebResponse<ReservationResponse> response = WebResponse.<ReservationResponse>builder()
                 .status(HttpStatus.CREATED.getReasonPhrase())
                 .message("Successfully create reservation")
-                .data(reservation)
+                .data(reservationResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
