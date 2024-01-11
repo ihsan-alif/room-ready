@@ -1,5 +1,6 @@
 package app.roomready.roomready.booking.app.service.impl;
 
+import app.roomready.roomready.booking.app.constant.ERoom;
 import app.roomready.roomready.booking.app.dto.request.RoomRequest;
 import app.roomready.roomready.booking.app.dto.request.RoomUpdateRequest;
 import app.roomready.roomready.booking.app.dto.response.PagingResponse;
@@ -39,7 +40,7 @@ public class RoomServiceImpl implements RoomService {
             Room room = Room.builder()
                     .name(request.getName())
                     .capacities(request.getCapacities())
-                    .status(request.getStatus())
+                    .status(ERoom.valueOf(request.getStatus().toUpperCase()))
                     .facilities(request.getFacilities())
                     .build();
             room = roomRepository.save(room);
@@ -48,8 +49,9 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     @Transactional(readOnly = true)
-    public Room getById(String id) {
-        return findByIdOrThrowNotFound(id);
+    public RoomResponse getById(String id) {
+        Room room = findByIdOrThrowNotFound(id);
+        return toRoomResponse(room);
     }
 
     @Override
@@ -94,7 +96,7 @@ public class RoomServiceImpl implements RoomService {
         room.setId(request.getId());
         room.setName(request.getName());
         room.setCapacities(request.getCapacities());
-        room.setStatus(request.getStatus());
+        room.setStatus(ERoom.valueOf(request.getStatus().toUpperCase()));
         room.setFacilities(request.getFacilities());
         roomRepository.saveAndFlush(room);
 
@@ -124,7 +126,7 @@ public class RoomServiceImpl implements RoomService {
                 .id(room.getId())
                 .name(room.getName())
                 .capacities(room.getCapacities())
-                .status(room.getStatus())
+                .status(room.getStatus().getDisplayValue())
                 .facilities(room.getFacilities())
                 .build();
     }

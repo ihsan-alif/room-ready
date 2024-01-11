@@ -1,5 +1,6 @@
 package app.roomready.roomready.booking.app.controller;
 
+import app.roomready.roomready.booking.app.constant.ERoom;
 import app.roomready.roomready.booking.app.dto.request.RoomRequest;
 import app.roomready.roomready.booking.app.dto.request.RoomUpdateRequest;
 import app.roomready.roomready.booking.app.dto.response.PagingResponse;
@@ -39,11 +40,11 @@ public class RoomController {
 
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> getRoomById(@RequestParam String id){
-        Room room = roomService.getById(id);
-        WebResponse<Room> response = WebResponse.<Room>builder()
+        RoomResponse roomResponse = roomService.getById(id);
+        WebResponse<RoomResponse> response = WebResponse.<RoomResponse>builder()
                 .status(HttpStatus.OK.getReasonPhrase())
                 .message("successfully get room by id")
-                .data(room)
+                .data(roomResponse)
                 .build();
 
         return ResponseEntity.ok(response);
@@ -54,7 +55,7 @@ public class RoomController {
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) Boolean status
+            @RequestParam(required = false) String status
     ){
         SearchRoomRequest request = SearchRoomRequest.builder()
                 .page(page)
