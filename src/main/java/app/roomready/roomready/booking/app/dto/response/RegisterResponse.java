@@ -9,7 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RegisterResonse {
+public class RegisterResponse {
     private String username;
     private List<String> role;
 }

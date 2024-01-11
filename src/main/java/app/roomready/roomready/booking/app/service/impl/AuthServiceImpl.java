@@ -4,7 +4,7 @@ import app.roomready.roomready.booking.app.constant.ERole;
 import app.roomready.roomready.booking.app.dto.request.LoginRequest;
 import app.roomready.roomready.booking.app.dto.request.UserRegisterRequest;
 import app.roomready.roomready.booking.app.dto.response.LoginResponse;
-import app.roomready.roomready.booking.app.dto.response.RegisterResonse;
+import app.roomready.roomready.booking.app.dto.response.RegisterResponse;
 import app.roomready.roomready.booking.app.entity.Role;
 import app.roomready.roomready.booking.app.entity.UserCredential;
 import app.roomready.roomready.booking.app.repository.UserCredentialRepository;
@@ -57,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public RegisterResonse register(UserRegisterRequest request) {
+    public RegisterResponse register(UserRegisterRequest request) {
         validationUtils.validate(request);
         Role roleEmployee = roleService.getOrSave(ERole.ROLE_EMPLOYEE);
 
@@ -76,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public RegisterResonse registerAdmin(UserRegisterRequest request) {
+    public RegisterResponse registerAdmin(UserRegisterRequest request) {
         validationUtils.validate(request);
         Role roleEmployee = roleService.getOrSave(ERole.ROLE_EMPLOYEE);
         Role roleAdmin = roleService.getOrSave(ERole.ROLE_ADMIN);
@@ -97,7 +97,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public RegisterResonse registerGA(UserRegisterRequest request) {
+    public RegisterResponse registerGA(UserRegisterRequest request) {
         validationUtils.validate(request);
         Role roleGA = roleService.getOrSave(ERole.ROLE_GA);
 
@@ -135,9 +135,9 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
-    private static RegisterResonse toRegisterResponse(UserCredential userCredential) {
+    private static RegisterResponse toRegisterResponse(UserCredential userCredential) {
         List<String> roles = userCredential.getRoles().stream().map(role -> role.getRole().name()).toList();
-        return RegisterResonse.builder()
+        return RegisterResponse.builder()
                 .username(userCredential.getUsername())
                 .role(roles)
                 .build();
