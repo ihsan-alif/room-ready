@@ -20,6 +20,4 @@ public interface ApprovalService {
     void deleteById(String request);
 
     void updateStatus(ApprovalRequestReservation request);
-//
-//    void update(ApprovalRequestReservation request);
 }

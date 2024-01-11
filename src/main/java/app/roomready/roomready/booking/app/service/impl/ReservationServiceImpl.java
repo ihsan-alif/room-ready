@@ -36,16 +36,12 @@ public class ReservationServiceImpl implements ReservationService {
 
     private final ApprovalService approvalService;
 
-    private final EquipmentNeedsRepository equipmentNeedsRepository;
 
     @SneakyThrows
     @Override
     public ReservationResponse create(ReservationRequest request) {
         Room roomById = roomService.get(request.getRoomId());
         Employee employee = employeeService.get(request.getEmployeeId());
-
-//        Reservation reservationOptional = reservationRepository.findById(request.getId().getId()).orElseThrow();
-
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd, HH:mm:ss");
 
         Date date = dateFormat.parse(request.getReservationDate());
