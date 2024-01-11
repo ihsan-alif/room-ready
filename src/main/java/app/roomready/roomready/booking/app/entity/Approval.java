@@ -35,9 +35,4 @@ public class Approval {
 //    @Column(length = 25)
     private ETrans acceptanceStatus;
 
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "reservation_id", referencedColumnName = "id")
-//    @JsonBackReference
-//    @JsonIgnore
-//    private Reservation reservation;
 }

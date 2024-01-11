@@ -9,6 +9,7 @@ import app.roomready.roomready.booking.app.exception.ErrorController;
 import app.roomready.roomready.booking.app.repository.ApprovalRepository;
 import app.roomready.roomready.booking.app.repository.ReservationRepository;
 import app.roomready.roomready.booking.app.service.*;
+import app.roomready.roomready.booking.app.utils.ValidationUtils;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -34,11 +35,10 @@ public class ApprovalServiceImpl implements ApprovalService {
     private final ApprovalRepository approvalRepository;
 
     private final RoomService roomService;
-    private final EmployeeService employeeService;
     private final ReservationRepository reservationRepository;
-    private final EquipmentNeedsService equipmentNeedsService;
 
-    private final UserService userService;
+    private final ValidationUtils utils;
+
     @Override
     @Transactional(readOnly = true)
     public Page<Approval> getAll(ApprovalRequest request) {
@@ -61,6 +61,7 @@ public class ApprovalServiceImpl implements ApprovalService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void  create(Approval request) {
+        utils.validate(request);
         approvalRepository.save(request);
     }
 
@@ -76,10 +77,9 @@ public class ApprovalServiceImpl implements ApprovalService {
     @SneakyThrows
     @Transactional(rollbackFor = Exception.class)
     public void updateStatus(ApprovalRequestReservation request) {
+
         Reservation reservation = reservationRepository.findById(request.getReservationId()).orElseThrow();
-
         RoomResponse roomResponse = roomService.getById(request.getIdRoom());
-
         Approval approval = approvalRepository.findById(request.getApprovedId()).orElseThrow();
         Room room = Room.builder()
                 .name(roomResponse.getName())
