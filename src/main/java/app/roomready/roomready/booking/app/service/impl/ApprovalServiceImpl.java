@@ -1,5 +1,6 @@
 package app.roomready.roomready.booking.app.service.impl;
 
+import app.roomready.roomready.booking.app.configuration.CSVHelper;
 import app.roomready.roomready.booking.app.constant.ERoom;
 import app.roomready.roomready.booking.app.constant.ETrans;
 import app.roomready.roomready.booking.app.dto.request.*;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,7 +39,8 @@ public class ApprovalServiceImpl implements ApprovalService {
     private final RoomService roomService;
     private final ReservationRepository reservationRepository;
 
-    private final ValidationUtils utils;
+    private final ReservationService reservationService;
+
 
     @Override
     @Transactional(readOnly = true)
@@ -58,12 +61,20 @@ public class ApprovalServiceImpl implements ApprovalService {
         );
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void  create(Approval request) {
-        utils.validate(request);
-        approvalRepository.save(request);
-    }
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public void  create(ApprovalRequest request) {
+//        utils.validate(request);
+//        ReservationResponse reservationResponse = reservationService.findById(request.getReservationId());
+//        Approval approval = Approval.builder()
+//                .rejectionReason(request.getRejectionReason())
+//                .employeeName(reservationResponse.getEmployeeName())
+//                .approval(reservationResponse.getReservationDate())
+//                .acceptanceStatus(request.getAcceptanceStatus())
+//                .approvedBy(request.getApprovedBy())
+//                .build();
+//        approvalRepository.save(approval);
+//    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -79,15 +90,16 @@ public class ApprovalServiceImpl implements ApprovalService {
     public void updateStatus(ApprovalRequestReservation request) {
 
         Reservation reservation = reservationRepository.findById(request.getReservationId()).orElseThrow();
-        RoomResponse roomResponse = roomService.getById(request.getIdRoom());
-        Approval approval = approvalRepository.findById(request.getApprovedId()).orElseThrow();
+        RoomResponse roomResponse = roomService.getById(reservation.getRoom().getId());
+
         Room room = Room.builder()
                 .name(roomResponse.getName())
                 .facilities(roomResponse.getFacilities())
-                .status(ERoom.AVAILABLE)
+                .status(ERoom.valueOf(roomResponse.getStatus().toUpperCase()))
                 .capacities(roomResponse.getCapacities())
-                .id(request.getIdRoom())
+                .id(roomResponse.getId())
                 .build();
+        if(room.getStatus().equals(ERoom.BOOKED)) throw new ResponseStatusException(HttpStatus.CONFLICT,"Room Already Booked");
 
         Reservation reservation1 = Reservation.builder()
                 .status(request.getApprovedStatus())
@@ -95,22 +107,25 @@ public class ApprovalServiceImpl implements ApprovalService {
                 .reservationDate(reservation.getReservationDate())
                 .employee(reservation.getEmployee())
                 .quantity(reservation.getQuantity())
+                .equipmentNeeds(reservation.getEquipmentNeeds())
                 .id(reservation.getId())
                 .build();
         reservationRepository.saveAndFlush(reservation1);
 
         Approval approvalSave = Approval.builder()
-                .approval(approval.getApproval())
-                .employeeName(approval.getEmployeeName())
+                .approval(reservation1.getReservationDate())
+                .employeeName(reservation1.getEmployee().getName())
                 .acceptanceStatus(request.getApprovedStatus())
                 .statusRoom(room.getStatus())
+                .approvedBy(request.getApprovedBy())
+                .rejectionReason(request.getRejection())
+//                .id(approval.getId())
                 .build();
         approvalRepository.saveAndFlush(approvalSave);
 
         if (reservation.getStatus().equals(ETrans.ACCEPT)){
             room.setStatus(ERoom.BOOKED);
         }
-
         RoomUpdateRequest roomUpdateRequest = RoomUpdateRequest.builder()
                 .capacities(room.getCapacities())
                 .status(room.getStatus().toString().toLowerCase())
@@ -121,6 +136,12 @@ public class ApprovalServiceImpl implements ApprovalService {
         roomService.update(roomUpdateRequest);
 
 
+    }
+
+    @Override
+    public ByteArrayInputStream downloadCsv() {
+        List<Approval> downloadCsv = approvalRepository.findAll();
+        return CSVHelper.tutorialsToCSV(downloadCsv);
     }
 
 

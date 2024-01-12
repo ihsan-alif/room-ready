@@ -19,20 +19,21 @@ public class Approval {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @JsonIgnore
     private String id;
 
     @Column(name = "approval_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date approval;
-
     private String employeeName;
 
-//    @Column(length = 25)
     @Enumerated(EnumType.STRING)
     private ERoom statusRoom;
     @Enumerated(EnumType.STRING)
-//    @Column(length = 25)
     private ETrans acceptanceStatus;
+
+    @Column(name = "rejection_reason")
+    private String rejectionReason;
+    @Column(name = "approved_by")
+    private String approvedBy;
 
 }

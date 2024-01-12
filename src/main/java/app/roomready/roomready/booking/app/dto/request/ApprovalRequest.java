@@ -1,10 +1,15 @@
 package app.roomready.roomready.booking.app.dto.request;
 
+import app.roomready.roomready.booking.app.constant.ERoom;
+import app.roomready.roomready.booking.app.constant.ETrans;
 import app.roomready.roomready.booking.app.entity.Approval;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+
+import java.util.Date;
 
 @Getter
 @Setter
@@ -18,14 +23,16 @@ public class ApprovalRequest {
     @JsonIgnore
     private Integer page;
 
-    private String id;
+    private String reservationId;
 
-    @NotEmpty(message = "Name has not be empty!")
-    private String idName;
+    @Enumerated(EnumType.STRING)
+//    @Column(length = 25)
+    private ETrans acceptanceStatus;
 
-    private Boolean statusRoom;
+    @Column(name = "approval_by")
+    private String approvedBy;
 
-    private Boolean statusAccceptance;
+    private String rejectionReason;
 
 
 }
