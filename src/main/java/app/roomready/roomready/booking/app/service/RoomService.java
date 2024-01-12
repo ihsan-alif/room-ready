@@ -2,6 +2,7 @@ package app.roomready.roomready.booking.app.service;
 
 import app.roomready.roomready.booking.app.dto.request.RoomRequest;
 import app.roomready.roomready.booking.app.dto.request.RoomUpdateRequest;
+import app.roomready.roomready.booking.app.dto.request.UpdateRoomStatusRequest;
 import app.roomready.roomready.booking.app.dto.response.RoomResponse;
 import app.roomready.roomready.booking.app.dto.response.WebResponse;
 import app.roomready.roomready.booking.app.entity.Room;
@@ -15,6 +16,7 @@ public interface RoomService {
     WebResponse<List<RoomResponse>> getAll(SearchRoomRequest request);
     RoomResponse update(RoomUpdateRequest request);
     void deleteById(String id);
+    RoomResponse updateStatus(UpdateRoomStatusRequest request);
 
     Room get(String id);
 }

@@ -3,6 +3,7 @@ package app.roomready.roomready.booking.app.service.impl;
 import app.roomready.roomready.booking.app.constant.ERoom;
 import app.roomready.roomready.booking.app.dto.request.RoomRequest;
 import app.roomready.roomready.booking.app.dto.request.RoomUpdateRequest;
+import app.roomready.roomready.booking.app.dto.request.UpdateRoomStatusRequest;
 import app.roomready.roomready.booking.app.dto.response.PagingResponse;
 import app.roomready.roomready.booking.app.dto.response.RoomResponse;
 import app.roomready.roomready.booking.app.dto.response.WebResponse;
@@ -36,6 +37,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public RoomResponse createNew(RoomRequest request) {
+        try {
             validationUtils.validate(request);
             Room room = Room.builder()
                     .name(request.getName())
@@ -43,8 +45,11 @@ public class RoomServiceImpl implements RoomService {
                     .status(ERoom.valueOf(request.getStatus().toUpperCase()))
                     .facilities(request.getFacilities())
                     .build();
-            room = roomRepository.save(room);
+            room = roomRepository.saveAndFlush(room);
             return toRoomResponse(room);
+        }catch (DataIntegrityViolationException e){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "room name already exist");
+        }
     }
 
     @Override
@@ -90,17 +95,19 @@ public class RoomServiceImpl implements RoomService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public RoomResponse update(RoomUpdateRequest request) {
-        validationUtils.validate(request);
-
-        Room room = findByIdOrThrowNotFound(request.getId());
-        room.setId(request.getId());
-        room.setName(request.getName());
-        room.setCapacities(request.getCapacities());
-        room.setStatus(ERoom.valueOf(request.getStatus().toUpperCase()));
-        room.setFacilities(request.getFacilities());
-        roomRepository.saveAndFlush(room);
-
-        return toRoomResponse(room);
+        try {
+            validationUtils.validate(request);
+            Room room = findByIdOrThrowNotFound(request.getId());
+            room.setId(request.getId());
+            room.setName(request.getName());
+            room.setCapacities(request.getCapacities());
+            room.setStatus(ERoom.valueOf(request.getStatus().toUpperCase()));
+            room.setFacilities(request.getFacilities());
+            roomRepository.saveAndFlush(room);
+            return toRoomResponse(room);
+        }catch (DataIntegrityViolationException e){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "room name already exist");
+        }
     }
 
     @Override
@@ -108,6 +115,14 @@ public class RoomServiceImpl implements RoomService {
     public void deleteById(String id) {
         Room room = findByIdOrThrowNotFound(id);
         roomRepository.delete(room);
+    }
+
+    @Override
+    public RoomResponse updateStatus(UpdateRoomStatusRequest request) {
+        Room room = findByIdOrThrowNotFound(request.getId());
+        room.setStatus(ERoom.valueOf(request.getStatus().toUpperCase()));
+        room = roomRepository.saveAndFlush(room);
+        return toRoomResponse(room);
     }
 
     @Override

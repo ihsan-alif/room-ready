@@ -3,6 +3,7 @@ package app.roomready.roomready.booking.app.controller;
 import app.roomready.roomready.booking.app.constant.ERoom;
 import app.roomready.roomready.booking.app.dto.request.RoomRequest;
 import app.roomready.roomready.booking.app.dto.request.RoomUpdateRequest;
+import app.roomready.roomready.booking.app.dto.request.UpdateRoomStatusRequest;
 import app.roomready.roomready.booking.app.dto.response.PagingResponse;
 import app.roomready.roomready.booking.app.dto.response.RoomResponse;
 import app.roomready.roomready.booking.app.dto.response.WebResponse;
@@ -55,7 +56,7 @@ public class RoomController {
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) String status
+            @RequestParam(required = false) ERoom status
     ){
         SearchRoomRequest request = SearchRoomRequest.builder()
                 .page(page)
@@ -83,14 +84,29 @@ public class RoomController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_GA')")
-    public ResponseEntity<?> updateRoom(@RequestBody RoomUpdateRequest request){
+    @PutMapping(path = "/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> updateRoom(@PathVariable("id") String id,
+            @RequestBody RoomUpdateRequest request){
+        request.setId(id);
         RoomResponse updatedRoom = roomService.update(request);
         WebResponse<?> response = WebResponse.builder()
                 .status(HttpStatus.OK.getReasonPhrase())
                 .message("successfully update room")
                 .data(updatedRoom)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping(path = "/{id}/status")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_GA')")
+    public ResponseEntity<?> updateStatusRoom(@PathVariable("id") String id, @RequestBody UpdateRoomStatusRequest request){
+        request.setId(id);
+        RoomResponse roomResponse = roomService.updateStatus(request);
+        WebResponse<RoomResponse> response = WebResponse.<RoomResponse>builder()
+                .status(HttpStatus.OK.getReasonPhrase())
+                .message("successfully change status room")
+                .data(roomResponse)
                 .build();
         return ResponseEntity.ok(response);
     }
