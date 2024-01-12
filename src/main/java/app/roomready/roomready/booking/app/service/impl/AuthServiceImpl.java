@@ -76,6 +76,7 @@ public class AuthServiceImpl implements AuthService {
 
         Employee employee = Employee.builder()
                 .userCredential(user)
+                .name(request.getName())
                 .build();
 
         employeeService.create(employee);
@@ -126,6 +127,7 @@ public class AuthServiceImpl implements AuthService {
 
         Employee employee = Employee.builder()
                 .userCredential(user)
+                .name(request.getName())
                 .build();
 
         employeeService.create(employee);

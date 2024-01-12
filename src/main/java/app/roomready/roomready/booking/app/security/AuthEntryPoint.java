@@ -20,7 +20,7 @@ public class AuthEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         WebResponse<String> webResponse = WebResponse.<String>builder()
-                .message("unauthorized")
+                .message("Invalid username or password")
                 .status(HttpStatus.UNAUTHORIZED.getReasonPhrase())
                 .build();
 

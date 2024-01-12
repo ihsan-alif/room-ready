@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public UserCredential updateCredential(UserCredential userCredential) {
         Optional<UserCredential> optionalUserCredential = userCredentialRepository.findById(userCredential.getId());
-        if (optionalUserCredential.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "customer not found");
+        if (optionalUserCredential.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found");
 
         UserCredential currentUser = (UserCredential) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserCredential credential = optionalUserCredential.get();

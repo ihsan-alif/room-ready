@@ -115,9 +115,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         UserCredential currentUser = (UserCredential) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserCredential userCredential = employee.getUserCredential();
 
-        if (!currentUser.getId().equals(userCredential.getId()) &&
-                currentUser.getAuthorities().stream().noneMatch(role -> role.getAuthority().equals(ROLE)))
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, FORBIDDEN);
+//        if (!currentUser.getId().equals(userCredential.getId()) &&
+//                currentUser.getAuthorities().stream().noneMatch(role -> role.getAuthority().equals(ROLE)))
+//            throw new ResponseStatusException(HttpStatus.FORBIDDEN, FORBIDDEN);
 
         employee.setName(request.getName());
         employee.setDivision(request.getDivision());
