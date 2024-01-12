@@ -21,20 +21,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserCredential loadUserById(String userId) {
         return userCredentialRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "unauthorized"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userCredentialRepository.findByUsername(username)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "unauthorized"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public UserCredential updateCredential(UserCredential userCredential) {
         Optional<UserCredential> optionalUserCredential = userCredentialRepository.findById(userCredential.getId());
-        if (optionalUserCredential.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "customer not found");
+        if (optionalUserCredential.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found");
 
         UserCredential currentUser = (UserCredential) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserCredential credential = optionalUserCredential.get();
