@@ -1,7 +1,11 @@
 package app.roomready.roomready.booking.app.dto.response;
 
 
+import app.roomready.roomready.booking.app.constant.ERoom;
+import app.roomready.roomready.booking.app.constant.ETrans;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.*;
 
 import java.util.Date;
@@ -23,7 +27,8 @@ public class ReservationResponse {
     @JsonFormat(pattern = "yyyy/MM/dd, HH:mm:ss", timezone = "Asia/Jakarta")
     private Date reservationDate;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private ETrans status;
 
     private List<EquipmentNeedsResponse> equipmentNeeds;
 }

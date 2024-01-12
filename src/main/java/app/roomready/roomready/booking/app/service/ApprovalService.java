@@ -9,15 +9,19 @@ import app.roomready.roomready.booking.app.dto.response.PagingResponse;
 import app.roomready.roomready.booking.app.entity.Approval;
 import org.springframework.data.domain.Page;
 
+import java.io.ByteArrayInputStream;
+
 public interface ApprovalService {
 
     Page<Approval> getAll (ApprovalRequest request);
 
     Approval getById(String request);
 
-    void create(Approval request);
+//    void create(ApprovalRequest request);
 
     void deleteById(String request);
 
     void updateStatus(ApprovalRequestReservation request);
+
+    ByteArrayInputStream downloadCsv();
 }

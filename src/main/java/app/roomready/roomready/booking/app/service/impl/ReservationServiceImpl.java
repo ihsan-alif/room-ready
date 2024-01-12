@@ -1,6 +1,7 @@
 package app.roomready.roomready.booking.app.service.impl;
 
 import app.roomready.roomready.booking.app.constant.ETrans;
+import app.roomready.roomready.booking.app.dto.request.ApprovalRequest;
 import app.roomready.roomready.booking.app.dto.request.ListEquipment;
 import app.roomready.roomready.booking.app.dto.request.ReservationGetAllRequest;
 import app.roomready.roomready.booking.app.dto.request.ReservationRequest;
@@ -34,7 +35,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     private final EquipmentNeedsService equipmentNeedsService;
 
-    private final ApprovalService approvalService;
+
 
 
     @SneakyThrows
@@ -42,6 +43,7 @@ public class ReservationServiceImpl implements ReservationService {
     public ReservationResponse create(ReservationRequest request) {
         Room roomById = roomService.get(request.getRoomId());
         Employee employee = employeeService.get(request.getEmployeeId());
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd, HH:mm:ss");
 
         Date date = dateFormat.parse(request.getReservationDate());
@@ -75,23 +77,24 @@ public class ReservationServiceImpl implements ReservationService {
                     .name(reservation.getEquipmentNeeds().getName())
                     .stock(reservation.getEquipmentNeeds().getStock())
                     .build();
-
             equipments.add(response);
         }
 
-        Approval approval = Approval.builder()
-                .approval(reservation.getReservationDate())
-                .acceptanceStatus(reservation.getStatus())
-                        .statusRoom(roomById.getStatus())
-                                        .build();
-        approvalService.create(approval);
+//        Approval approval = Approval.builder()
+//                .approval(reservation.getReservationDate())
+//                .acceptanceStatus(reservation.getStatus())
+//                        .statusRoom(roomById.getStatus())
+//                .employeeName(reservation.getEmployee().getName())
+//                .build();
+//
+//        approvalService.create(approval);
 
         return  ReservationResponse.builder()
                 .id(reservation.getId())
                 .employeeName(request.getEmployeeName())
                 .roomName(reservation.getRoom().getName())
                 .reservationDate(date)
-                .status(reservation.getStatus().getDisplayValue())
+                .status(reservation.getStatus())
                 .equipmentNeeds(equipments)
                 .build();
     }

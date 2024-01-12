@@ -1,5 +1,6 @@
 package app.roomready.roomready.booking.app.dto.response;
 
+import app.roomready.roomready.booking.app.constant.ERoom;
 import app.roomready.roomready.booking.app.constant.ETrans;
 import app.roomready.roomready.booking.app.entity.Approval;
 import app.roomready.roomready.booking.app.entity.Reservation;
@@ -18,8 +19,8 @@ public class ApprovalResponse {
     private String id;
     private String name;
     @Enumerated(EnumType.STRING)
-    private ETrans status;
+    private ETrans statusTransaction;
     @Enumerated(EnumType.STRING)
-    private ETrans acceptance;
+    private ERoom statusRoom;
 
 }

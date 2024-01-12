@@ -23,10 +23,12 @@ public class ApprovalRequestReservation {
     @Pattern(regexp = "^(DESCLINE|ACCEPT)$", message = "status must be 'accept' or 'descline'")
     @Enumerated(EnumType.STRING)
     private ETrans approvedStatus;
+    @NotBlank(message = "name approved must not blank")
+    private String approvedBy;
 
-    private String approvedId;
+    private String rejection;
 
-    private String idRoom;
+//    private String idRoom;
 
 
 

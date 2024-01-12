@@ -26,9 +26,6 @@ public class Reservation {
 //    @Column(length = 25)
     private ETrans status;
 
-    @Column(name = "rejection_reason")
-    private String rejectionReason;
-
     private Integer quantity;
 
     @OneToOne
