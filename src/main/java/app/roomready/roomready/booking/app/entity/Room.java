@@ -16,15 +16,13 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     private Integer capacities;
 
     @Enumerated(EnumType.STRING)
-//    @Column(length = 25)
     private ERoom status;
-
-//    private Boolean status;
 
     private String facilities;
 
