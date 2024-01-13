@@ -2,6 +2,7 @@ package app.roomready.roomready.booking.app.controller;
 
 import app.roomready.roomready.booking.app.dto.request.ReservationGetAllRequest;
 import app.roomready.roomready.booking.app.dto.request.ReservationRequest;
+import app.roomready.roomready.booking.app.dto.response.PagingResponse;
 import app.roomready.roomready.booking.app.dto.response.ReservationResponse;
 import app.roomready.roomready.booking.app.dto.response.WebResponse;
 import app.roomready.roomready.booking.app.entity.Reservation;
@@ -30,23 +31,30 @@ public class ReservationController {
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-//    @PostMapping
-//    public ResponseEntity<?> createReservation2(@RequestBody Reservation request){
-//        ReservationResponse reservationResponse = reservationService.createReservation(request);
-//        return ResponseEntity.ok(reservationResponse);
-//    }
-
     @GetMapping
-    public ResponseEntity<?> getAll(@RequestParam(required = false,defaultValue = "1") Integer size,
-                                    @RequestParam(required = false,defaultValue = "10") Integer page){
+    public ResponseEntity<?> getAll(@RequestParam(defaultValue = "10") Integer size,
+                                    @RequestParam(defaultValue = "1") Integer page){
 
-        ReservationGetAllRequest pageRequest = ReservationGetAllRequest.builder()
+        ReservationRequest pageRequest = ReservationRequest.builder()
                 .size(size)
                 .page(page)
                 .build();
 
         Page<Reservation> getAllPage = reservationService.getAll(pageRequest);
-        return ResponseEntity.ok().body(getAllPage);
+        PagingResponse pagingResponse = PagingResponse.builder()
+                .page(pageRequest.getPage())
+                .size(pageRequest.getSize())
+                .totalPage(getAllPage.getTotalPages())
+                .totalElements(getAllPage.getTotalElements())
+                .build();
+
+        WebResponse<?> webResponse = WebResponse.builder()
+                .status(HttpStatus.OK.getReasonPhrase())
+                .message("Success Get All Data")
+                .paging(pagingResponse)
+                .data(getAllPage.getContent())
+                .build();
+        return ResponseEntity.ok().body(webResponse);
     }
 
     @GetMapping(path = "/{id}")

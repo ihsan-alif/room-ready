@@ -12,8 +12,7 @@ public interface ReservationService {
     ReservationResponse create (ReservationRequest request);
     ReservationResponse findById (String request);
 
-    Page<Reservation> getAll (ReservationGetAllRequest request);
-
+    Page<Reservation> getAll (ReservationRequest request);
 
     ReservationResponse update(ReservationRequest request);
 
