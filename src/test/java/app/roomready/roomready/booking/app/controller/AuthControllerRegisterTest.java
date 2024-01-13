@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -47,6 +48,7 @@ class AuthControllerRegisterTest {
 
     @BeforeEach
     void setUp() throws Exception {
+
         String requestBody = "{\"username\": \"initadmin\", \"password\": \"password\"}";
 
         ResultActions resultActions = mockMvc.perform(
@@ -65,6 +67,7 @@ class AuthControllerRegisterTest {
         UserRegisterRequest request = new UserRegisterRequest();
         request.setUsername("testusername");
         request.setPassword("secretpassword");
+        request.setName("Sri Rahayu");
 
         mockMvc.perform(
                 post("/api/auth/register")
@@ -91,10 +94,75 @@ class AuthControllerRegisterTest {
     }
 
     @Test
-    void testRegisterUserBadRequest() throws Exception {
+    void testRegisterAdminSuccess() throws Exception {
+
+        UserRegisterRequest request = new UserRegisterRequest();
+        request.setUsername("testadmin");
+        request.setPassword("secretpassword");
+        request.setName("Budi Raharja");
+
+        mockMvc.perform(
+                post("/api/auth/register/admin")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+        ).andExpectAll(
+                status().isCreated()
+        ).andDo(result -> {
+            WebResponse<RegisterResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(),
+                    new TypeReference<>() {
+                    }
+            );
+
+            RegisterResponse data = response.getData();
+            List<String> role = data.getRole();
+
+            assertEquals("Created", response.getStatus());
+            assertEquals("successfully create new user", response.getMessage());
+            assertEquals("testadmin", data.getUsername());
+            assertTrue(role.contains("ROLE_ADMIN"));
+        });
+    }
+
+    @Test
+    void testRegisterGASuccess() throws Exception {
+
+        UserRegisterRequest request = new UserRegisterRequest();
+        request.setUsername("testgabaru");
+        request.setPassword("secretpassword");
+        request.setName("Budiman");
+
+        mockMvc.perform(
+                post("/api/auth/register/ga")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+        ).andExpectAll(
+                status().isCreated()
+        ).andDo(result -> {
+            WebResponse<RegisterResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(),
+                    new TypeReference<>() {
+                    }
+            );
+
+            RegisterResponse data = response.getData();
+            List<String> role = data.getRole();
+
+            assertEquals("Created", response.getStatus());
+            assertEquals("successfully create new user", response.getMessage());
+            assertEquals("testgabaru", data.getUsername());
+            assertTrue(role.contains("ROLE_GA"));
+        });
+    }
+
+    @Test
+    void testRegisterBadRequest() throws Exception {
         UserRegisterRequest request = new UserRegisterRequest();
         request.setUsername("");
         request.setPassword("secret");
+        request.setName("Nama");
 
         mockMvc.perform(
                 post("/api/auth/register")
@@ -117,10 +185,9 @@ class AuthControllerRegisterTest {
     }
 
     @Test
-    void testRegisterUserConflict() throws Exception {
-        UserCredential user = userCredentialRepository.findByUsername("newusername")
-                .orElseThrow();
-        userCredentialRepository.delete(user);
+    void testRegisterConflict() throws Exception {
+        Optional<UserCredential> credential = userCredentialRepository.findByUsername("newusername");
+        credential.ifPresent(userCredential -> userCredentialRepository.delete(userCredential));
 
         Role role = roleService.getOrSave(ERole.ROLE_EMPLOYEE);
         UserCredential userCredential = new UserCredential();
@@ -132,6 +199,7 @@ class AuthControllerRegisterTest {
         UserRegisterRequest request = new UserRegisterRequest();
         request.setUsername("newusername");
         request.setPassword("secretpassword");
+        request.setName("New Name");
 
         mockMvc.perform(
                 post("/api/auth/register")

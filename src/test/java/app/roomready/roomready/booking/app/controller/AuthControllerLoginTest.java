@@ -30,9 +30,6 @@ public class AuthControllerLoginTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private UserCredentialRepository userCredentialRepository;
-
-    @Autowired
     private ObjectMapper objectMapper;
 
     @Test
