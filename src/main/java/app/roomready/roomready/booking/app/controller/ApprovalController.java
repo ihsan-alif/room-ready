@@ -78,7 +78,7 @@ public class ApprovalController {
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_GA')")
     public ResponseEntity<?> updateApproval(@RequestBody ApprovalRequestReservation request){
         approvalService.updateStatus(request);
-        return ResponseEntity.ok("Succed");
+        return ResponseEntity.ok("Succeed");
     }
 
     @DeleteMapping(path = "/{id}")

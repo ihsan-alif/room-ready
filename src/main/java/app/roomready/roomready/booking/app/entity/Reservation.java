@@ -23,7 +23,6 @@ public class Reservation {
     private Date reservationDate;
 
     @Enumerated(EnumType.STRING)
-//    @Column(length = 25)
     private ETrans status;
 
     private Integer quantity;

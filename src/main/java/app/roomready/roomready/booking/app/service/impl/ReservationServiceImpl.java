@@ -80,14 +80,6 @@ public class ReservationServiceImpl implements ReservationService {
             equipments.add(response);
         }
 
-//        Approval approval = Approval.builder()
-//                .approval(reservation.getReservationDate())
-//                .acceptanceStatus(reservation.getStatus())
-//                        .statusRoom(roomById.getStatus())
-//                .employeeName(reservation.getEmployee().getName())
-//                .build();
-//
-//        approvalService.create(approval);
 
         return  ReservationResponse.builder()
                 .id(reservation.getId())
@@ -110,12 +102,11 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public Page<Reservation> getAll(ReservationGetAllRequest request) {
+    public Page<Reservation> getAll(ReservationRequest request) {
         if (request.getPage() <= 0) request.setPage(1);
         Pageable pageable = PageRequest.of(
                 (request.getPage() - 1), request.getSize()
         );
-
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         return reservationRepository.findAll(pageRequest);
     }
