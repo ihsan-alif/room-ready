@@ -1,15 +1,11 @@
 package app.roomready.roomready.booking.app.controller;
 
 import app.roomready.roomready.booking.app.dto.request.ApprovalRequest;
-import app.roomready.roomready.booking.app.dto.request.ApprovalRequestReservation;
 import app.roomready.roomready.booking.app.dto.response.ApprovalResponse;
-import app.roomready.roomready.booking.app.dto.response.ApprovalResponseReservation;
 import app.roomready.roomready.booking.app.dto.response.PagingResponse;
 import app.roomready.roomready.booking.app.dto.response.WebResponse;
 import app.roomready.roomready.booking.app.entity.Approval;
-import app.roomready.roomready.booking.app.entity.Reservation;
 import app.roomready.roomready.booking.app.service.ApprovalService;
-import app.roomready.roomready.booking.app.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
@@ -36,7 +32,8 @@ public class ApprovalController {
                 .page(page)
                 .build();
 
-        Page<Approval> all = approvalService.getAll(approvalRequest);
+        Page<ApprovalResponse> all = approvalService.getAll(approvalRequest);
+
         PagingResponse pagingResponse = PagingResponse.builder()
                 .page(approvalRequest.getPage())
                 .size(approvalRequest.getPage())
@@ -53,32 +50,12 @@ public class ApprovalController {
         return ResponseEntity.ok(webResponse);
     }
 
-//    @PostMapping
-//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_GA')")
-//    public ResponseEntity<?> createApproval(@RequestBody ApprovalRequest request){
-//        approvalService.create(request);
-//
-//        WebResponse<?> webResponse = WebResponse.builder()
-//                .message("Succes Create Approval")
-//                .status(HttpStatus.CREATED.getReasonPhrase())
-//                .data("Succeed")
-//                .build();
-//        return ResponseEntity.ok(webResponse);
-//    }
-
 
     @GetMapping(path = "/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_GA')")
     public ResponseEntity<?> getApprovalById(@PathVariable String id){
         Approval byId = approvalService.getById(id);
         return ResponseEntity.ok(byId);
-    }
-
-    @PutMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_GA')")
-    public ResponseEntity<?> updateApproval(@RequestBody ApprovalRequestReservation request){
-        approvalService.updateStatus(request);
-        return ResponseEntity.ok("Succeed");
     }
 
     @DeleteMapping(path = "/{id}")
@@ -92,6 +69,17 @@ public class ApprovalController {
     public ResponseEntity<InputStreamResource> getFile() {
         String filename = "approval.csv";
         InputStreamResource file = new InputStreamResource(approvalService.downloadCsv());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/csv"))
+                .body(file);
+    }
+
+    @PostMapping(path = "/download")
+    public ResponseEntity<InputStreamResource> getApprovalDownload() {
+        String filename = "dataApproval.csv";
+        InputStreamResource file = new InputStreamResource(approvalService.downloadApproval());
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)

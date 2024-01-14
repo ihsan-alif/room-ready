@@ -6,6 +6,8 @@ import app.roomready.roomready.booking.app.dto.response.EquipmentNeedsResponse;
 import app.roomready.roomready.booking.app.entity.EquipmentNeeds;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 public interface EquipmentNeedsService {
 
     EquipmentNeedsResponse create(EquipmentRequest request);
@@ -19,4 +21,6 @@ public interface EquipmentNeedsService {
     void delete(String id);
 
     Page<EquipmentNeedsResponse> search(SearchEquipmentRequest request);
+
+    List<EquipmentNeeds> getAllById(String id);
 }

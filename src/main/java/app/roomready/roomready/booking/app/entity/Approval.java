@@ -1,9 +1,6 @@
 package app.roomready.roomready.booking.app.entity;
 
-import app.roomready.roomready.booking.app.constant.ERoom;
 import app.roomready.roomready.booking.app.constant.ETrans;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,17 +20,16 @@ public class Approval {
 
     @Column(name = "approval_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date approval;
-    private String employeeName;
+    private Date approvalDate;
 
-    @Enumerated(EnumType.STRING)
-    private ERoom statusRoom;
     @Enumerated(EnumType.STRING)
     private ETrans acceptanceStatus;
 
-    @Column(name = "rejection_reason")
-    private String rejectionReason;
     @Column(name = "approved_by")
     private String approvedBy;
+
+    @OneToOne
+    @JoinColumn(name = "reservation_id")
+    private Reservation reservation;
 
 }

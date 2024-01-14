@@ -27,11 +27,14 @@ public class Reservation {
 
     private Integer quantity;
 
-    @OneToOne
+    @Column(name = "rejection_reason")
+    private String rejectionReason;
+
+    @ManyToOne
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
 

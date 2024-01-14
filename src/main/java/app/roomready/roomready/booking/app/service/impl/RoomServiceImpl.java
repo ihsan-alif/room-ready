@@ -26,7 +26,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -129,6 +128,17 @@ public class RoomServiceImpl implements RoomService {
     @Transactional(rollbackFor = Exception.class, readOnly = true)
     public Room get(String id) {
         return findByIdOrThrowNotFound(id);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Room updateStatusRoom(Room room) {
+
+        Room roomStatus = findByIdOrThrowNotFound(room.getId());
+
+        roomStatus.setStatus(room.getStatus());
+
+        return roomRepository.save(roomStatus);
     }
 
     private Room findByIdOrThrowNotFound(String id){
