@@ -7,11 +7,14 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ApprovalRequest {
+public class SearchReservationRequest {
 
-    private Integer size;
+    private String startDate;
+
+    private String endDate;
 
     private Integer page;
 
+    private Integer size;
 
 }

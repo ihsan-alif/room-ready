@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 @Service
 @RequiredArgsConstructor
 public class RoomServiceImpl implements RoomService {
@@ -132,6 +133,17 @@ public class RoomServiceImpl implements RoomService {
     @Transactional(rollbackFor = Exception.class, readOnly = true)
     public Room get(String id) {
         return findByIdOrThrowNotFound(id);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Room updateStatusRoom(Room room) {
+
+        Room roomStatus = findByIdOrThrowNotFound(room.getId());
+
+        roomStatus.setStatus(room.getStatus());
+
+        return roomRepository.save(roomStatus);
     }
 
     private Room findByIdOrThrowNotFound(String id){

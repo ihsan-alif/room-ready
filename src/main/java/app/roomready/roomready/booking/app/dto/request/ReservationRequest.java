@@ -1,9 +1,7 @@
 package app.roomready.roomready.booking.app.dto.request;
 
-import app.roomready.roomready.booking.app.entity.Employee;
-import app.roomready.roomready.booking.app.entity.Reservation;
-import app.roomready.roomready.booking.app.entity.Room;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 import java.util.List;
@@ -15,21 +13,16 @@ import java.util.List;
 @Builder
 public class ReservationRequest {
 
-
     @JsonIgnore
-    private Integer size;
-
-    @JsonIgnore
-    private Integer page;
-
     private String id;
 
+    @NotEmpty(message = "Employee not be empty!")
     private String employeeId;
-    private String employeeName;
 
-
+    @NotEmpty(message = "Room not be empty!")
     private String roomId;
 
+    @NotEmpty(message = "reservation date not be empty!")
     private String reservationDate;
 
     private List<ListEquipment> equipmentNeeds;

@@ -1,12 +1,9 @@
 package app.roomready.roomready.booking.app.dto.response;
 
-import app.roomready.roomready.booking.app.constant.ERoom;
-import app.roomready.roomready.booking.app.constant.ETrans;
-import app.roomready.roomready.booking.app.entity.Approval;
-import app.roomready.roomready.booking.app.entity.Reservation;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.*;
+
+import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,12 +12,15 @@ import lombok.*;
 @Builder
 public class ApprovalResponse {
 
-    private String date;
     private String id;
-    private String name;
-    @Enumerated(EnumType.STRING)
-    private ETrans statusTransaction;
-    @Enumerated(EnumType.STRING)
-    private ERoom statusRoom;
+
+    private Date approvalDate;
+
+    private String approvalBy;
+
+    private String statusApproval;
+
+
+    private List<ReservationResponse> responses;
 
 }

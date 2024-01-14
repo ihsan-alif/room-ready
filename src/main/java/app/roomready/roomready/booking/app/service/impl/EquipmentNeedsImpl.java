@@ -66,9 +66,7 @@ public class EquipmentNeedsImpl implements EquipmentNeedsService {
     @Override
     @Transactional(readOnly = true, rollbackFor = Exception.class)
     public EquipmentNeeds get(String id) {
-        return repository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "not found")
-        );
+        return repository.findById(id).orElseThrow();
     }
 
     @Override
@@ -118,6 +116,12 @@ public class EquipmentNeedsImpl implements EquipmentNeedsService {
         }
 
         return new PageImpl<>(responses, pageable, all.getTotalElements());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, readOnly = true)
+    public List<EquipmentNeeds> getAllById(String id) {
+        return repository.findAllById(id);
     }
 
     private static Specification<EquipmentNeeds> getEquipmentNeedsSpecification(SearchEquipmentRequest request) {

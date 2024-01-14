@@ -1,7 +1,5 @@
 package app.roomready.roomready.booking.app.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,17 +20,14 @@ public class UserCredential implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
     @Column(unique = true)
     private String username;
+
     private String password;
+
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
-
-
-    @OneToOne
-    @JoinColumn(name = "employee_id",referencedColumnName = "id")
-    @JsonBackReference
-    private Employee employee;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

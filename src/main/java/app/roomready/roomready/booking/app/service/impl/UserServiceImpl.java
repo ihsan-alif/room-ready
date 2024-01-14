@@ -5,7 +5,6 @@ import app.roomready.roomready.booking.app.repository.UserCredentialRepository;
 import app.roomready.roomready.booking.app.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -32,16 +31,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public UserCredential updateCredential(UserCredential userCredential) {
+    public void updateCredential(UserCredential userCredential) {
         Optional<UserCredential> optionalUserCredential = userCredentialRepository.findById(userCredential.getId());
         if (optionalUserCredential.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found");
 
-        UserCredential currentUser = (UserCredential) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserCredential credential = optionalUserCredential.get();
-
-        if (!currentUser.getId().equals(credential.getId())) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "forbidden");
-
-        return userCredentialRepository.save(userCredential);
+        userCredentialRepository.save(userCredential);
     }
 
     @Override
