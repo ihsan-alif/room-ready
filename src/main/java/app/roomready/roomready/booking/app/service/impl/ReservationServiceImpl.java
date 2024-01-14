@@ -86,12 +86,14 @@ public class ReservationServiceImpl implements ReservationService {
 
                 reservationRepository.save(reservation);
 
-                ListEquipmentNeeds response = ListEquipmentNeeds.builder()
-                        .id(reservation.getEquipmentNeeds().getId())
-                        .name(reservation.getEquipmentNeeds().getName())
-                        .quantity(reservation.getQuantity())
-                        .build();
-                equipments.add(response);
+                if (reservation.getEquipmentNeeds() != null) {
+                    ListEquipmentNeeds response = ListEquipmentNeeds.builder()
+                            .id(reservation.getEquipmentNeeds().getId())
+                            .name(reservation.getEquipmentNeeds().getName())
+                            .quantity(reservation.getQuantity())
+                            .build();
+                    equipments.add(response);
+                }
             }
         } else {
             reservationRepository.save(reservation);
@@ -152,8 +154,11 @@ public class ReservationServiceImpl implements ReservationService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Reservation not found")
         );
 
+        utils.validate(request);
 
         Room roomById = roomService.get(request.getRoomId());
+
+        if (roomById.getStatus().equals(ERoom.BOOKED)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Room no Available");
 
         Employee employee = employeeService.get(request.getEmployeeId());
 
@@ -167,27 +172,28 @@ public class ReservationServiceImpl implements ReservationService {
 
         List<ListEquipmentNeeds> equipments = new ArrayList<>();
 
-        for (ListEquipment equipment : request.getEquipmentNeeds()){
-            EquipmentNeeds equipmentNeeds = equipmentNeedsService.get(equipment.getEquipmentId());
+        List<ListEquipment> equipmentNeedsList = request.getEquipmentNeeds();
 
-            reservationNotFound.setEquipmentNeeds(equipmentNeeds);
-            reservationNotFound.setQuantity(equipment.getQuantity());
+        if (equipmentNeedsList != null && !equipmentNeedsList.isEmpty()) {
+            for (ListEquipment equipment : equipmentNeedsList) {
+                EquipmentNeeds equipmentNeeds = equipmentNeedsService.get(equipment.getEquipmentId());
 
-            if (equipmentNeeds.getStock() - reservationNotFound.getQuantity() < 0){
-                throw  new ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantity exceeds Stock");
+                reservationNotFound.setEquipmentNeeds(equipmentNeeds);
+                reservationNotFound.setQuantity(equipment.getQuantity());
+
+                reservationRepository.save(reservationNotFound);
+
+                if (reservationNotFound.getEquipmentNeeds() != null) {
+                    ListEquipmentNeeds response = ListEquipmentNeeds.builder()
+                            .id(reservationNotFound.getEquipmentNeeds().getId())
+                            .name(reservationNotFound.getEquipmentNeeds().getName())
+                            .quantity(reservationNotFound.getQuantity())
+                            .build();
+                    equipments.add(response);
+                }
             }
-
-            equipmentNeeds.setStock(equipmentNeeds.getStock() - reservationNotFound.getQuantity());
-            equipmentNeedsService.update(equipmentNeeds);
-
+        } else {
             reservationRepository.save(reservationNotFound);
-
-            ListEquipmentNeeds response = ListEquipmentNeeds.builder()
-                    .id(reservationNotFound.getEquipmentNeeds().getId())
-                    .name(reservationNotFound.getEquipmentNeeds().getName())
-                    .quantity(reservationNotFound.getQuantity())
-                    .build();
-            equipments.add(response);
         }
 
 
