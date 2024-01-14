@@ -12,5 +12,8 @@ public class SearchRoomRequest {
     private Integer page;
     private Integer size;
     private String name;
+    private Integer minCapacities;
+    private Integer maxCapacities;
     private ERoom status;
+    private String facilities;
 }
