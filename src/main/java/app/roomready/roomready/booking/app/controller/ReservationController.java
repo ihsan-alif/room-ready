@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/api/reservation")
@@ -78,13 +80,13 @@ public class ReservationController {
     }
 
     @GetMapping(path = "/{employeeId}/employee")
-    public ResponseEntity<WebResponse<ReservationResponse>> getByEmployeeId(@PathVariable String employeeId){
+    public ResponseEntity<WebResponse<List<ReservationResponse>>> getByEmployeeId(@PathVariable String employeeId){
 
-        ReservationResponse findbyId = reservationService.getReservationByEmployeeId(employeeId);
-        WebResponse<ReservationResponse> response = WebResponse.<ReservationResponse>builder()
+        List<ReservationResponse> reservationByEmployeeId = reservationService.getReservationByEmployeeId(employeeId);
+        WebResponse<List<ReservationResponse>> response = WebResponse.<List<ReservationResponse>>builder()
                 .status(HttpStatus.OK.getReasonPhrase())
                 .message("successfully get reservation by employee id")
-                .data(findbyId)
+                .data(reservationByEmployeeId)
                 .build();
 
         return ResponseEntity.ok(response);

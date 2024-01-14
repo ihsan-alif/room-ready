@@ -115,18 +115,20 @@ public class ReservationServiceImpl implements ReservationService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "NOT_FOUND")
         );
 
-        List<EquipmentNeeds> allById = equipmentNeedsService.getAllById(reservationNotFound.getEquipmentNeeds().getId());
-
         List<ListEquipmentNeeds> equipments = new ArrayList<>();
 
-        for (EquipmentNeeds equipmentNeeds : allById){
-            ListEquipmentNeeds response = ListEquipmentNeeds.builder()
-                    .id(equipmentNeeds.getId())
-                    .name(equipmentNeeds.getName())
-                    .quantity(reservationNotFound.getQuantity())
-                    .build();
+        if (reservationNotFound.getEquipmentNeeds() != null) {
+            List<EquipmentNeeds> allById = equipmentNeedsService.getAllById(reservationNotFound.getEquipmentNeeds().getId());
 
-            equipments.add(response);
+            for (EquipmentNeeds equipmentNeeds : allById) {
+                ListEquipmentNeeds response = ListEquipmentNeeds.builder()
+                        .id(equipmentNeeds.getId())
+                        .name(equipmentNeeds.getName())
+                        .quantity(reservationNotFound.getQuantity())
+                        .build();
+
+                equipments.add(response);
+            }
         }
 
         return ReservationResponse.builder()
@@ -338,34 +340,45 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public ReservationResponse getReservationByEmployeeId(String employeeId) {
+    public List<ReservationResponse> getReservationByEmployeeId(String employeeId) {
 
-        Reservation reservation = reservationRepository.findByEmployeeId(employeeId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found")
-        );
+        List<Reservation> byEmployeeId = reservationRepository.findByEmployeeId(employeeId);
 
-        List<EquipmentNeeds> allById = equipmentNeedsService.getAllById(reservation.getEquipmentNeeds().getId());
+        if (byEmployeeId.isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "BAD_REQUEST");
 
-        List<ListEquipmentNeeds> equipments = new ArrayList<>();
+        List<ReservationResponse> responses = new ArrayList<>();
 
-        for (EquipmentNeeds equipmentNeeds : allById){
-            ListEquipmentNeeds response = ListEquipmentNeeds.builder()
-                    .id(equipmentNeeds.getId())
-                    .name(equipmentNeeds.getName())
-                    .quantity(reservation.getQuantity())
+        for (Reservation reservation : byEmployeeId){
+
+            List<ListEquipmentNeeds> equipments = new ArrayList<>();
+
+            if (reservation.getEquipmentNeeds() != null) {
+                List<EquipmentNeeds> allById = equipmentNeedsService.getAllById(reservation.getEquipmentNeeds().getId());
+
+                for (EquipmentNeeds equipmentNeeds : allById) {
+                    ListEquipmentNeeds response = ListEquipmentNeeds.builder()
+                            .id(equipmentNeeds.getId())
+                            .name(equipmentNeeds.getName())
+                            .quantity(reservation.getQuantity())
+                            .build();
+
+                    equipments.add(response);
+                }
+            }
+
+            ReservationResponse response = ReservationResponse.builder()
+                    .id(reservation.getId())
+                    .employeeName(reservation.getEmployee().getName())
+                    .roomName(reservation.getRoom().getName())
+                    .reservationDate(reservation.getReservationDate())
+                    .status(reservation.getStatus().getDisplayValue())
+                    .equipmentNeeds(equipments)
                     .build();
 
-            equipments.add(response);
+            responses.add(response);
         }
 
-        return ReservationResponse.builder()
-                .id(reservation.getId())
-                .employeeName(reservation.getEmployee().getName())
-                .roomName(reservation.getRoom().getName())
-                .reservationDate(reservation.getReservationDate())
-                .status(reservation.getStatus().getDisplayValue())
-                .equipmentNeeds(equipments)
-                .build();
+        return responses;
     }
 
     private Specification<Reservation> getReservationSpecification(SearchReservationRequest request) {

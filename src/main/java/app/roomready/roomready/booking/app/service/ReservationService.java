@@ -6,6 +6,8 @@ import app.roomready.roomready.booking.app.dto.request.UpdateStatusReservation;
 import app.roomready.roomready.booking.app.dto.response.ReservationResponse;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 public interface ReservationService {
 
     ReservationResponse create (ReservationRequest request);
@@ -18,5 +20,5 @@ public interface ReservationService {
 
     Page<ReservationResponse> search(SearchReservationRequest request);
 
-    ReservationResponse getReservationByEmployeeId(String employeeId);
+    List<ReservationResponse> getReservationByEmployeeId(String employeeId);
 }

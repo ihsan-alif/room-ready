@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.ByteArrayInputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +32,8 @@ public class ApprovalServiceImpl implements ApprovalService {
     private final ApprovalRepository approvalRepository;
 
     private final EquipmentNeedsService equipmentNeedsService;
+
+    private static final String FORMAT_DATE = "yyyy-MM-dd";
 
     @Override
     @Transactional(readOnly = true)
@@ -118,8 +122,13 @@ public class ApprovalServiceImpl implements ApprovalService {
     }
 
     @Override
-    public ByteArrayInputStream downloadApproval() {
-        List<Approval> download = approvalRepository.download();
+    public ByteArrayInputStream downloadApproval(String startDate, String endDate) {
+
+        LocalDate parsedStartDate = (startDate != null) ? LocalDate.parse(startDate, DateTimeFormatter.ofPattern(FORMAT_DATE)) : null;
+        LocalDate parsedEndDate = (endDate != null) ? LocalDate.parse(endDate, DateTimeFormatter.ofPattern(FORMAT_DATE)) : null;
+
+
+        List<Approval> download = approvalRepository.download(parsedStartDate, parsedEndDate);
         return CSVHelper.approvalToCSV(download);
     }
 

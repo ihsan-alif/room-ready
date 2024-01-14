@@ -25,7 +25,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 				),
 				@Server(
 						description = "Server ENV",
-						url = "http://121322234:8080"
+						url = "http://108.136.195.14:8080"
 				)
 		},
 		security = {

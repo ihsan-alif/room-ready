@@ -77,9 +77,11 @@ public class ApprovalController {
     }
 
     @PostMapping(path = "/download")
-    public ResponseEntity<InputStreamResource> getApprovalDownload() {
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_GA')")
+    public ResponseEntity<InputStreamResource> getApprovalDownload(@RequestParam(name = "startDate", required = false) String startDate,
+                                                                   @RequestParam(name = "endDate", required = false) String endDate) {
         String filename = "dataApproval.csv";
-        InputStreamResource file = new InputStreamResource(approvalService.downloadApproval());
+        InputStreamResource file = new InputStreamResource(approvalService.downloadApproval(startDate, endDate));
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)

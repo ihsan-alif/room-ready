@@ -19,5 +19,5 @@ public interface ApprovalService {
 
     ByteArrayInputStream downloadCsv();
 
-    ByteArrayInputStream downloadApproval();
+    ByteArrayInputStream downloadApproval(String startDate, String endDate);
 }
