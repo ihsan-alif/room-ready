@@ -25,7 +25,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -118,6 +122,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomResponse updateStatus(UpdateRoomStatusRequest request) {
+        validationUtils.validate(request);
         Room room = findByIdOrThrowNotFound(request.getId());
         room.setStatus(ERoom.valueOf(request.getStatus().toUpperCase()));
         room = roomRepository.saveAndFlush(room);
@@ -164,9 +169,27 @@ public class RoomServiceImpl implements RoomService {
                 Predicate predicateName = criteriaBuilder.like(root.get("name"), "%" + request.getName().toLowerCase() + "%");
                 predicates.add(predicateName);
             }
+            if (request.getMinCapacities() != null){
+                Predicate predicateMinCapacities = criteriaBuilder.greaterThanOrEqualTo(root.get("capacities"), request.getMinCapacities());
+                predicates.add(predicateMinCapacities);
+            }
+            if (request.getMaxCapacities() != null){
+                Predicate predicateMaxCapacities = criteriaBuilder.lessThanOrEqualTo(root.get("capacities"), request.getMaxCapacities());
+                predicates.add(predicateMaxCapacities);
+            }
             if(request.getStatus() != null){
                 Predicate predicateStatus = criteriaBuilder.equal(root.get("status"), request.getStatus());
                 predicates.add(predicateStatus);
+            }
+            if (request.getFacilities() != null){
+                String[] facilitiesArray = request.getFacilities().split(", ");
+
+                List<Predicate> facilities = Arrays.stream(facilitiesArray)
+                        .map(facility -> criteriaBuilder.like(root.get("facilities"), "%" + facility.trim() + "%"))
+                        .collect(Collectors.toList());
+
+                Predicate predicateFacilities = criteriaBuilder.or(facilities.toArray(new Predicate[0]));
+                predicates.add(predicateFacilities);
             }
             return query.where(predicates.toArray(new Predicate[]{})).getRestriction();
         };

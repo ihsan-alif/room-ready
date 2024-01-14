@@ -40,7 +40,7 @@ public class RoomController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<?> getRoomById(@RequestParam String id){
+    public ResponseEntity<?> getRoomById(@PathVariable("id") String id){
         RoomResponse roomResponse = roomService.getById(id);
         WebResponse<RoomResponse> response = WebResponse.<RoomResponse>builder()
                 .status(HttpStatus.OK.getReasonPhrase())
@@ -56,13 +56,19 @@ public class RoomController {
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) ERoom status
+            @RequestParam(required = false) Integer minCapacities,
+            @RequestParam(required = false) Integer maxCapacities,
+            @RequestParam(required = false) ERoom status,
+            @RequestParam(required = false) String facilities
     ){
         SearchRoomRequest request = SearchRoomRequest.builder()
                 .page(page)
                 .size(size)
                 .name(name)
+                .minCapacities(minCapacities)
+                .maxCapacities(maxCapacities)
                 .status(status)
+                .facilities(facilities)
                 .build();
 
         WebResponse<?> response = roomService.getAll(request);
@@ -72,7 +78,7 @@ public class RoomController {
 
     @DeleteMapping(path = "/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> deleteRoomById(@RequestParam String id){
+    public ResponseEntity<?> deleteRoomById(@PathVariable("id") String id){
         roomService.deleteById(id);
 
         WebResponse<String> response = WebResponse.<String>builder()
